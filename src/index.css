@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", serif;
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --surface-canvas: #ffffff;
+    --surface-studio: #f4f4f2;
+    --surface-hero: #eaeaea;
+    --ink-primary: #1c1c1c;
+    --ink-secondary: #595959;
+    --ink-muted: #767676;
+    --border-hairline: #e5e5e3;
+    --accent-sale: #c41e24;
+    --accent-gold: #c89b3c;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    color: var(--ink-primary);
+    background-color: var(--surface-canvas);
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, .font-serif-display {
+    font-family: var(--font-serif);
+    text-wrap: balance;
+  }
+
+  button, a, input, select, textarea {
+    outline-color: #1c1c1c;
+  }
+
+  :focus-visible {
+    outline: 2px solid #1c1c1c;
+    outline-offset: 2px;
+  }
+}
+
+.font-display {
+  font-family: var(--font-serif);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
