@@ -3,8 +3,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  Moon,
   Search,
   ShoppingBag,
+  Sun,
   User,
   X,
   ChevronDown,
@@ -17,6 +19,8 @@ interface HeaderProps {
   onNavigate: (page: AppPage) => void;
   currency: CurrencyCode;
   onCurrencyChange: (code: CurrencyCode) => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
   cartCount: number;
   wishlistCount: number;
   onOpenCart: () => void;
@@ -42,6 +46,8 @@ export function Header({
   onNavigate,
   currency,
   onCurrencyChange,
+  theme,
+  onToggleTheme,
   cartCount,
   wishlistCount,
   onOpenCart,
@@ -104,9 +110,9 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#E5E5E3]">
+    <header className="sticky top-0 z-40 bg-white dark:bg-[#0E1214] border-b border-[#E5E5E3] dark:border-[#23292D] transition-colors duration-200">
       {/* Announcement Bar */}
-      <div className="bg-black text-white h-9 px-4 flex items-center justify-between text-xs tracking-wide">
+      <div className="bg-[#0B0D0E] dark:bg-[#07090A] text-white h-9 px-4 flex items-center justify-between text-xs tracking-wide border-b border-transparent dark:border-[#1E2428]">
         <button
           type="button"
           aria-label="Previous announcement"
@@ -145,7 +151,7 @@ export function Header({
             aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen((v) => !v)}
-            className="lg:hidden p-2 -ml-2 text-[#1C1C1C] hover:bg-[#F4F4F2] transition-colors"
+            className="lg:hidden p-2 -ml-2 text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-[#F4F4F2] dark:hover:bg-[#191F23] transition-colors"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -154,33 +160,30 @@ export function Header({
             type="button"
             onClick={onOpenSearch}
             aria-label="Search catalog"
-            className="inline-flex items-center gap-2 text-sm text-[#595959] hover:text-[#1C1C1C] transition-colors py-2 whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-2 text-sm text-[#595959] dark:text-[#B0B3B5] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] transition-colors py-2 whitespace-nowrap shrink-0"
           >
             <Search className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">Search</span>
           </button>
         </div>
 
-        {/* Center: Iconic Stacked Editorial Wordmark matching thejacketmaker.ae */}
+        {/* Center: Iconic Stacked Editorial Didone Wordmark — Maison Valen */}
         <button
           type="button"
           onClick={() => handleNavClick({ view: 'home' })}
-          aria-label="The Jacket Maker Home"
+          aria-label="Maison Valen Home"
           className="shrink-0 flex flex-col items-center leading-none group py-1"
         >
-          <span className="font-display text-[9px] tracking-[0.26em] font-semibold text-[#1C1C1C] uppercase">
-            THE
+          <span className="font-display text-[9.5px] tracking-[0.34em] font-medium text-[#595959] dark:text-[#B0B3B5] uppercase">
+            MAISON
           </span>
-          <span className="font-display text-[17px] sm:text-[19px] tracking-[0.06em] font-bold text-[#1C1C1C] -mt-0.5 uppercase">
-            JACKET
-          </span>
-          <span className="font-display text-[17px] sm:text-[19px] tracking-[0.06em] font-bold text-[#1C1C1C] -mt-1 uppercase">
-            MAKER
+          <span className="font-display text-[22px] sm:text-[26px] tracking-[0.14em] font-bold text-[#141414] dark:text-[#F4F3EE] mt-0.5 uppercase">
+            VALEN
           </span>
         </button>
 
-        {/* Right: Currency, Account, Cart */}
-        <div className="flex items-center justify-end gap-3 sm:gap-5 flex-1">
+        {/* Right: Currency, Theme Toggle, Account, Cart */}
+        <div className="flex items-center justify-end gap-2.5 sm:gap-4 flex-1">
           {/* Currency Selector */}
           <div className="relative hidden md:block">
             <button
@@ -188,7 +191,7 @@ export function Header({
               aria-label="Select currency"
               aria-expanded={currencyOpen}
               onClick={() => setCurrencyOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 text-xs text-[#595959] hover:text-[#1C1C1C] py-2 whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs text-[#595959] dark:text-[#B0B3B5] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] py-2 whitespace-nowrap shrink-0"
             >
               <span>{CURRENCIES[currency].label}</span>
               <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />
@@ -196,7 +199,7 @@ export function Header({
             {currencyOpen && (
               <div
                 role="menu"
-                className="absolute right-0 mt-1 w-64 bg-white border border-[#E5E5E3] shadow-lg py-1.5 z-50"
+                className="absolute right-0 mt-1 w-64 bg-white dark:bg-[#151A1D] border border-[#E5E5E3] dark:border-[#262D31] shadow-lg py-1.5 z-50"
               >
                 {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
                   <button
@@ -209,8 +212,8 @@ export function Header({
                     }}
                     className={`w-full text-left px-4 py-2 text-xs transition-colors flex items-center justify-between ${
                       currency === code
-                        ? 'bg-[#F4F4F2] font-semibold text-[#1C1C1C]'
-                        : 'text-[#595959] hover:bg-[#FAF9F7] hover:text-[#1C1C1C]'
+                        ? 'bg-[#F4F4F2] dark:bg-[#1F262A] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]'
+                        : 'text-[#595959] dark:text-[#B0B3B5] hover:bg-[#FAF9F7] dark:hover:bg-[#1A2024] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
                     }`}
                   >
                     <span>{CURRENCIES[code].label}</span>
@@ -221,16 +224,33 @@ export function Header({
             )}
           </div>
 
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="p-2 text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-[#F4F4F2] dark:hover:bg-[#191F23] transition-colors shrink-0"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4" aria-hidden="true" />
+            ) : (
+              <Moon className="w-4 h-4" aria-hidden="true" />
+            )}
+          </button>
+
           <button
             type="button"
             onClick={onOpenAccount}
             aria-label="Account and saved items"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#1C1C1C] hover:text-[#595959] transition-colors py-2 whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#1C1C1C] dark:text-[#F4F3EE] hover:text-[#595959] dark:hover:text-[#B0B3B5] transition-colors py-2 whitespace-nowrap shrink-0"
           >
             <span className="hidden sm:inline">Account</span>
             <User className="w-4 h-4" aria-hidden="true" />
             {wishlistCount > 0 && (
-              <span className="text-[11px] text-[#595959] tabular-nums">({wishlistCount})</span>
+              <span className="text-[11px] text-[#595959] dark:text-[#B0B3B5] tabular-nums">
+                ({wishlistCount})
+              </span>
             )}
           </button>
 
@@ -238,7 +258,7 @@ export function Header({
             type="button"
             onClick={onOpenCart}
             aria-label={`Shopping cart with ${cartCount} items`}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#1C1C1C] hover:text-[#595959] transition-colors py-2 whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#1C1C1C] dark:text-[#F4F3EE] hover:text-[#595959] dark:hover:text-[#B0B3B5] transition-colors py-2 whitespace-nowrap shrink-0"
           >
             <span className="hidden sm:inline">Cart</span>
             <span className="relative inline-flex items-center">
@@ -246,7 +266,7 @@ export function Header({
               {cartCount > 0 && (
                 <span
                   data-testid="cart-badge"
-                  className="ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[11px] font-semibold bg-[#1C1C1C] text-white tabular-nums"
+                  className="ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[11px] font-semibold bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] tabular-nums"
                 >
                   {cartCount}
                 </span>
@@ -256,10 +276,10 @@ export function Header({
         </div>
       </div>
 
-      {/* Desktop Primary Navigation Row (matching exact thejacketmaker.ae hierarchy) */}
+      {/* Desktop Primary Navigation Row */}
       <nav
         aria-label="Primary navigation"
-        className="hidden lg:block border-t border-[#F0F0EE] bg-white"
+        className="hidden lg:block border-t border-[#F0F0EE] dark:border-[#1E2428] bg-white dark:bg-[#0E1214] transition-colors duration-200"
       >
         <div className="max-w-[1440px] mx-auto px-8 h-11 flex items-center justify-center gap-7 xl:gap-9">
           {navItems.map((item) => (
@@ -267,12 +287,12 @@ export function Header({
               key={item.label}
               type="button"
               onClick={() => handleNavClick(item.target)}
-              className={`relative h-full inline-flex items-center text-[11.5px] font-medium tracking-[0.11em] whitespace-nowrap shrink-0 transition-colors ${
+              className={`relative h-full inline-flex items-center text-[11.5px] font-medium tracking-[0.13em] whitespace-nowrap shrink-0 transition-colors ${
                 item.isSale
-                  ? 'text-[#C41E24] hover:text-[#99161B] font-semibold'
+                  ? 'text-[#C41E24] dark:text-[#E8555A] hover:text-[#99161B] dark:hover:text-[#F07175] font-semibold'
                   : item.isActive
-                    ? 'text-[#1C1C1C]'
-                    : 'text-[#4A4A4A] hover:text-[#1C1C1C]'
+                    ? 'text-[#1C1C1C] dark:text-[#F4F3EE]'
+                    : 'text-[#4A4A4A] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
               }`}
             >
               {item.label}
@@ -280,7 +300,7 @@ export function Header({
                 <span
                   aria-hidden="true"
                   className={`absolute bottom-0 left-0 right-0 h-[2px] ${
-                    item.isSale ? 'bg-[#C41E24]' : 'bg-[#1C1C1C]'
+                    item.isSale ? 'bg-[#C41E24] dark:bg-[#E8555A]' : 'bg-[#1C1C1C] dark:bg-[#F4F3EE]'
                   }`}
                 />
               )}
@@ -291,15 +311,17 @@ export function Header({
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#E5E5E3] bg-white px-5 py-5 space-y-4">
+        <div className="lg:hidden border-t border-[#E5E5E3] dark:border-[#23292D] bg-white dark:bg-[#12171A] px-5 py-5 space-y-4">
           <nav aria-label="Mobile navigation" className="flex flex-col space-y-1">
             {navItems.map((item) => (
               <button
                 key={item.label}
                 type="button"
                 onClick={() => handleNavClick(item.target)}
-                className={`w-full text-left py-2.5 text-xs tracking-[0.12em] font-medium border-b border-[#F2F2F0] ${
-                  item.isSale ? 'text-[#C41E24] font-semibold' : 'text-[#1C1C1C]'
+                className={`w-full text-left py-2.5 text-xs tracking-[0.13em] font-medium border-b border-[#F2F2F0] dark:border-[#1E2428] ${
+                  item.isSale
+                    ? 'text-[#C41E24] dark:text-[#E8555A] font-semibold'
+                    : 'text-[#1C1C1C] dark:text-[#F4F3EE]'
                 }`}
               >
                 {item.label}
@@ -307,22 +329,27 @@ export function Header({
             ))}
           </nav>
 
-          <div className="pt-2">
-            <label htmlFor="mobile-currency" className="block text-xs text-[#595959] mb-1.5">
-              Currency & Region
-            </label>
-            <select
-              id="mobile-currency"
-              value={currency}
-              onChange={(e) => onCurrencyChange(e.target.value as CurrencyCode)}
-              className="w-full border border-[#D8D8D5] px-3 py-2.5 text-xs bg-white text-[#1C1C1C]"
-            >
-              {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
-                <option key={code} value={code}>
-                  {CURRENCIES[code].label}
-                </option>
-              ))}
-            </select>
+          <div className="pt-2 space-y-3">
+            <div>
+              <label
+                htmlFor="mobile-currency"
+                className="block text-xs text-[#595959] dark:text-[#A8ACAF] mb-1.5"
+              >
+                Currency &amp; Region
+              </label>
+              <select
+                id="mobile-currency"
+                value={currency}
+                onChange={(e) => onCurrencyChange(e.target.value as CurrencyCode)}
+                className="w-full border border-[#D8D8D5] dark:border-[#2B3237] px-3 py-2.5 text-xs bg-white dark:bg-[#171D20] text-[#1C1C1C] dark:text-[#F4F3EE]"
+              >
+                {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
+                  <option key={code} value={code}>
+                    {CURRENCIES[code].label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}

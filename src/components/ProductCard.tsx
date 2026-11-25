@@ -21,9 +21,9 @@ export function ProductCard({
   onQuickAdd,
 }: ProductCardProps) {
   return (
-    <article className="group flex flex-col bg-white transition-transform duration-200 hover:-translate-y-0.5">
+    <article className="group flex flex-col bg-transparent transition-transform duration-200 hover:-translate-y-0.5">
       {/* Studio Image Surface */}
-      <div className="relative aspect-[3/4] bg-[#F1F1EF] overflow-hidden">
+      <div className="relative aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden">
         <button
           type="button"
           onClick={() => onSelectProduct(product.slug)}
@@ -47,10 +47,14 @@ export function ProductCard({
               : `Save ${product.name} to wishlist`
           }
           aria-pressed={isWishlisted}
-          className="absolute top-3 right-3 w-9 h-9 bg-white/90 hover:bg-white flex items-center justify-center text-[#1C1C1C] transition-colors"
+          className="absolute top-3 right-3 w-9 h-9 bg-white/90 dark:bg-[#0E1214]/85 hover:bg-white dark:hover:bg-[#0E1214] flex items-center justify-center text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors"
         >
           <Heart
-            className={`w-4 h-4 ${isWishlisted ? 'fill-[#C41E24] text-[#C41E24]' : 'text-[#1C1C1C]'}`}
+            className={`w-4 h-4 ${
+              isWishlisted
+                ? 'fill-[#C41E24] text-[#C41E24] dark:fill-[#E8555A] dark:text-[#E8555A]'
+                : 'text-[#1C1C1C] dark:text-[#F4F3EE]'
+            }`}
             aria-hidden="true"
           />
         </button>
@@ -60,7 +64,7 @@ export function ProductCard({
           <button
             type="button"
             onClick={() => onQuickAdd(product)}
-            className="w-full py-2.5 bg-[#1C1C1C]/95 hover:bg-black text-white text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors"
+            className="w-full py-2.5 bg-[#1C1C1C]/95 dark:bg-[#F4F3EE]/95 hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors"
           >
             Quick Add · Size M
           </button>
@@ -69,23 +73,25 @@ export function ProductCard({
 
       {/* Clean Unboxed Metadata */}
       <div className="pt-3.5 flex flex-col flex-1">
-        <div className="flex items-center gap-2 text-[11.5px] text-[#595959] mb-1">
+        <div className="flex items-center gap-2 text-[11.5px] text-[#595959] dark:text-[#A8ACAF] mb-1">
           <span>{product.categoryLabel}</span>
           {product.primeDelivery && (
             <>
               <span aria-hidden="true">·</span>
-              <span className="text-[#1C1C1C] font-medium">Prime Delivery</span>
+              <span className="text-[#1C1C1C] dark:text-[#F4F3EE] font-medium">Prime Delivery</span>
             </>
           )}
           {product.discountPercent && (
             <>
               <span aria-hidden="true">·</span>
-              <span className="text-[#C41E24] font-semibold">{product.discountPercent}% off</span>
+              <span className="text-[#C41E24] dark:text-[#E8555A] font-semibold">
+                {product.discountPercent}% off
+              </span>
             </>
           )}
         </div>
 
-        <h3 className="font-body text-[15px] font-semibold text-[#1C1C1C] leading-snug mb-1.5">
+        <h3 className="font-body text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-snug mb-1.5">
           <button
             type="button"
             onClick={() => onSelectProduct(product.slug)}
@@ -96,9 +102,14 @@ export function ProductCard({
         </h3>
 
         {/* Rating Row */}
-        <div className="flex items-center gap-1.5 text-xs text-[#595959] mb-2 tabular-nums">
-          <Star className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C]" aria-hidden="true" />
-          <span className="font-medium text-[#1C1C1C]">{product.rating.toFixed(1)}</span>
+        <div className="flex items-center gap-1.5 text-xs text-[#595959] dark:text-[#A8ACAF] mb-2 tabular-nums">
+          <Star
+            className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C] dark:fill-[#D9AD4E] dark:text-[#D9AD4E]"
+            aria-hidden="true"
+          />
+          <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+            {product.rating.toFixed(1)}
+          </span>
           <span aria-hidden="true">·</span>
           <span>{product.reviewCount} Reviews</span>
         </div>
@@ -106,11 +117,11 @@ export function ProductCard({
         {/* Swatches + Price Baseline */}
         <div className="mt-auto pt-1 flex items-end justify-between gap-2">
           <div className="flex items-baseline gap-2 tabular-nums">
-            <span className="text-[15px] font-semibold text-[#1C1C1C]">
+            <span className="text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
               {formatMoney(product.priceAED, currency)}
             </span>
             {product.compareAtAED && (
-              <span className="text-xs text-[#767676] line-through">
+              <span className="text-xs text-[#767676] dark:text-[#84888B] line-through">
                 {formatMoney(product.compareAtAED, currency)}
               </span>
             )}
@@ -121,7 +132,7 @@ export function ProductCard({
               <span
                 key={c.name}
                 title={c.name}
-                className="w-3 h-3 rounded-full border border-black/15 shrink-0"
+                className="w-3 h-3 rounded-full border border-black/20 dark:border-white/25 shrink-0"
                 style={{ backgroundColor: c.hex }}
               />
             ))}

@@ -26,11 +26,12 @@ import type {
 import { calculateCartSummary } from './utils/commerce';
 
 const STORAGE_KEYS = {
-  CART: 'tjm_ae_cart_v1',
-  WISHLIST: 'tjm_ae_wishlist_v1',
-  ORDERS: 'tjm_ae_orders_v1',
-  INQUIRIES: 'tjm_ae_inquiries_v1',
-  CURRENCY: 'tjm_ae_currency_v1',
+  CART: 'mv_ae_cart_v1',
+  WISHLIST: 'mv_ae_wishlist_v1',
+  ORDERS: 'mv_ae_orders_v1',
+  INQUIRIES: 'mv_ae_inquiries_v1',
+  CURRENCY: 'mv_ae_currency_v1',
+  THEME: 'mv_ae_theme_v1',
 } as const;
 
 function readStorage<T>(key: string, fallback: T): T {
@@ -57,6 +58,9 @@ export default function App() {
   const [inquiries, setInquiries] = useState<CustomInquiry[]>(() =>
     readStorage<CustomInquiry[]>(STORAGE_KEYS.INQUIRIES, [])
   );
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    readStorage<'light' | 'dark'>(STORAGE_KEYS.THEME, 'light')
+  );
   const [promoCode, setPromoCode] = useState('');
 
   const [cartOpen, setCartOpen] = useState(false);
@@ -64,6 +68,20 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    try {
+      window.localStorage.setItem(STORAGE_KEYS.THEME, JSON.stringify(theme));
+    } catch {
+      /* ignore */
+    }
+  }, [theme]);
 
   useEffect(() => {
     try {
@@ -190,10 +208,10 @@ export default function App() {
       : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#1C1C1C]">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#0E1214] text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors duration-200">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-black focus:text-white focus:px-4 focus:py-2 text-xs"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-black dark:focus:bg-[#F4F3EE] focus:text-white dark:focus:text-[#0E1214] focus:px-4 focus:py-2 text-xs"
       >
         Skip to main content
       </a>
@@ -203,6 +221,8 @@ export default function App() {
         onNavigate={navigate}
         currency={currency}
         onCurrencyChange={setCurrency}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         cartCount={cartSummary.itemCount}
         wishlistCount={wishlist.length}
         onOpenCart={() => setCartOpen(true)}
@@ -213,6 +233,7 @@ export default function App() {
       <main id="main-content" className="flex-1">
         {page.view === 'home' && (
           <HomePage
+            theme={theme}
             currency={currency}
             wishlist={wishlist}
             onToggleWishlist={toggleWishlist}

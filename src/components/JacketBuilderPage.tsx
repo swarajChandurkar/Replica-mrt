@@ -109,13 +109,13 @@ export function JacketBuilderPage({
     <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-10 lg:py-14">
       {/* Header */}
       <div className="max-w-3xl mb-10">
-        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] mb-2">
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
           Bespoke Leather Configurator · Free UAE Shipping &amp; Alteration
         </p>
-        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C] leading-tight mb-3">
+        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight mb-3">
           Design Your Own Leather Jacket
         </h1>
-        <p className="text-sm sm:text-base text-[#595959] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
           {prefillName
             ? `Starting from the proportions of ${prefillName} — configure your hide, finish, hardware, lining, and personal monogram with real-time pricing.`
             : 'Configure every detail from base silhouette and natural full-grain hide to YKK hardware, interior lining, and pocket embroidery. Includes a dedicated design consultant and studio illustration review.'}
@@ -126,7 +126,7 @@ export function JacketBuilderPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
         {/* Sticky Live Visual & Spec Sheet */}
         <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-5">
-          <div className="relative aspect-[3/4] bg-[#F1F1EF] overflow-hidden border border-[#E5E5E3]">
+          <div className="relative aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden border border-[#E5E5E3] dark:border-[#262D31]">
             <SafeImage
               src={previewImage}
               alt={`Bespoke ${BUILDER_STYLE_DELTAS[config.baseStyle].label} preview`}
@@ -156,39 +156,39 @@ export function JacketBuilderPage({
           </div>
 
           {/* Live Summary Ledger */}
-          <div className="border border-[#E5E5E3] bg-[#FAF9F7] p-5 space-y-2.5 text-xs">
-            <div className="flex items-center justify-between text-[#595959]">
+          <div className="border border-[#E5E5E3] dark:border-[#262D31] bg-[#FAF9F7] dark:bg-[#14191C] p-5 space-y-2.5 text-xs">
+            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Silhouette</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {BUILDER_STYLE_DELTAS[config.baseStyle].label}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959]">
+            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Hide &amp; Finish</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {BUILDER_LEATHER_DELTAS[config.leatherType].label} ·{' '}
                 {BUILDER_FINISH_DELTAS[config.leatherFinish].label}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959]">
+            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Shade &amp; Hardware</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {config.shade} · {config.hardware}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959]">
+            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Inner Lining</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {BUILDER_LINING_DELTAS[config.lining].label}
               </span>
             </div>
-            <div className="pt-3 mt-2 border-t border-[#E5E5E3] flex items-baseline justify-between">
-              <span className="font-semibold uppercase tracking-[0.12em] text-[#1C1C1C]">
+            <div className="pt-3 mt-2 border-t border-[#E5E5E3] dark:border-[#262D31] flex items-baseline justify-between">
+              <span className="font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] dark:text-[#F4F3EE]">
                 Estimated Total
               </span>
               <span
                 data-testid="builder-total-price"
-                className="font-display text-2xl font-semibold text-[#1C1C1C] tabular-nums"
+                className="font-display text-2xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] tabular-nums"
               >
                 {formatMoney(totalAED, currency)}
               </span>
@@ -200,7 +200,7 @@ export function JacketBuilderPage({
         <div className="lg:col-span-7 space-y-9">
           {/* 1. Base Style */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               01. Base Style*
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -214,14 +214,14 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, baseStyle: key }))}
                     className={`p-3.5 border text-left transition-colors flex items-center justify-between gap-2 ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <span className="text-xs font-medium">{item.label}</span>
                     <span
                       className={`text-[11px] tabular-nums ${
-                        active ? 'text-white/80' : 'text-[#595959]'
+                        active ? 'text-white/80 dark:text-[#0E1214]/75' : 'text-[#595959] dark:text-[#A8ACAF]'
                       }`}
                     >
                       {item.deltaAED === 0
@@ -236,7 +236,7 @@ export function JacketBuilderPage({
 
           {/* 2. Leather Type */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               02. Full-Grain Leather Type*
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -250,21 +250,25 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, leatherType: key }))}
                     className={`p-3.5 border text-left transition-colors ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold">{item.label}</span>
                       <span
                         className={`text-[11px] tabular-nums ${
-                          active ? 'text-white/80' : 'text-[#595959]'
+                          active ? 'text-white/80 dark:text-[#0E1214]/75' : 'text-[#595959] dark:text-[#A8ACAF]'
                         }`}
                       >
                         {item.deltaAED === 0 ? 'Included' : `+${formatMoney(item.deltaAED, currency)}`}
                       </span>
                     </div>
-                    <p className={`text-[11px] mt-1 ${active ? 'text-white/75' : 'text-[#767676]'}`}>
+                    <p
+                      className={`text-[11px] mt-1 ${
+                        active ? 'text-white/75 dark:text-[#0E1214]/70' : 'text-[#767676] dark:text-[#8A8E91]'
+                      }`}
+                    >
                       {item.note}
                     </p>
                   </button>
@@ -275,7 +279,7 @@ export function JacketBuilderPage({
 
           {/* 3. Leather Finish */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               03. Leather Finish
             </legend>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -289,14 +293,14 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, leatherFinish: key }))}
                     className={`p-3 border text-left transition-colors ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <span className="block text-xs font-medium">{item.label}</span>
                     <span
                       className={`block text-[11px] mt-0.5 tabular-nums ${
-                        active ? 'text-white/75' : 'text-[#767676]'
+                        active ? 'text-white/75 dark:text-[#0E1214]/70' : 'text-[#767676] dark:text-[#8A8E91]'
                       }`}
                     >
                       {item.deltaAED === 0 ? 'Included' : `+${formatMoney(item.deltaAED, currency)}`}
@@ -310,7 +314,7 @@ export function JacketBuilderPage({
           {/* 4. Shade & Hardware */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <fieldset className="space-y-3">
-              <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+              <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
                 04. Leather Shade
               </legend>
               <div className="grid grid-cols-2 gap-2">
@@ -323,12 +327,12 @@ export function JacketBuilderPage({
                       onClick={() => setConfig((c) => ({ ...c, shade: shade.name }))}
                       className={`px-3 py-2.5 border text-xs flex items-center gap-2 transition-colors ${
                         active
-                          ? 'border-[#1C1C1C] bg-[#FAF9F7] font-semibold text-[#1C1C1C]'
-                          : 'border-[#D8D8D5] text-[#595959] hover:border-[#1C1C1C]'
+                          ? 'border-[#1C1C1C] dark:border-[#F4F3EE] bg-[#FAF9F7] dark:bg-[#1B2226] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]'
+                          : 'border-[#D8D8D5] dark:border-[#262D31] bg-white dark:bg-[#14191C] text-[#595959] dark:text-[#A8ACAF] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                       }`}
                     >
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-black/15 shrink-0"
+                        className="w-3.5 h-3.5 rounded-full border border-black/20 dark:border-white/25 shrink-0"
                         style={{ backgroundColor: shade.hex }}
                       />
                       <span className="truncate">{shade.name}</span>
@@ -339,7 +343,7 @@ export function JacketBuilderPage({
             </fieldset>
 
             <fieldset className="space-y-3">
-              <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+              <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
                 05. YKK Hardware Finish
               </legend>
               <div className="grid grid-cols-2 gap-2">
@@ -350,8 +354,8 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, hardware: hw }))}
                     className={`px-3 py-2.5 border text-xs transition-colors ${
                       config.hardware === hw
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     {hw}
@@ -363,7 +367,7 @@ export function JacketBuilderPage({
 
           {/* 6. Inner Lining */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               06. Inner Lining
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -377,14 +381,14 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, lining: key }))}
                     className={`p-3 border text-left flex items-center justify-between gap-2 transition-colors ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <span className="text-xs font-medium">{item.label}</span>
                     <span
                       className={`text-[11px] tabular-nums ${
-                        active ? 'text-white/75' : 'text-[#595959]'
+                        active ? 'text-white/75 dark:text-[#0E1214]/70' : 'text-[#595959] dark:text-[#A8ACAF]'
                       }`}
                     >
                       {item.deltaAED === 0 ? 'Included' : `+${formatMoney(item.deltaAED, currency)}`}
@@ -397,7 +401,7 @@ export function JacketBuilderPage({
 
           {/* 7. Exterior Artwork/Logo Embroidery */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               07. Exterior Artwork / Logo Embroidery
             </legend>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -413,14 +417,14 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, exteriorEmbroidery: key }))}
                     className={`p-3 border text-left transition-colors ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <span className="block text-xs font-medium">{item.label}</span>
                     <span
                       className={`block text-[11px] mt-0.5 tabular-nums ${
-                        active ? 'text-white/75' : 'text-[#767676]'
+                        active ? 'text-white/75 dark:text-[#0E1214]/70' : 'text-[#767676] dark:text-[#8A8E91]'
                       }`}
                     >
                       {item.deltaAED === 0 ? 'Included' : `+${formatMoney(item.deltaAED, currency)}`}
@@ -433,7 +437,7 @@ export function JacketBuilderPage({
 
           {/* 8. Inner Lining Personalization */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               08. Inner Lining Pocket Personalization
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -451,14 +455,14 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, innerPersonalization: key }))}
                     className={`p-3 border text-left transition-colors ${
                       active
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                     }`}
                   >
                     <span className="block text-xs font-medium">{item.label}</span>
                     <span
                       className={`block text-[11px] mt-0.5 tabular-nums ${
-                        active ? 'text-white/75' : 'text-[#767676]'
+                        active ? 'text-white/75 dark:text-[#0E1214]/70' : 'text-[#767676] dark:text-[#8A8E91]'
                       }`}
                     >
                       {item.deltaAED === 0 ? 'Included' : `+${formatMoney(item.deltaAED, currency)}`}
@@ -472,7 +476,7 @@ export function JacketBuilderPage({
               <div>
                 <label
                   htmlFor="builder-monogram"
-                  className="block text-xs text-[#595959] mb-1.5"
+                  className="block text-xs text-[#595959] dark:text-[#A8ACAF] mb-1.5"
                 >
                   {config.innerPersonalization === 'initials'
                     ? 'Enter Initials or Name (up to 16 characters)'
@@ -491,7 +495,7 @@ export function JacketBuilderPage({
                       ? 'e.g. K. Al Maktoum'
                       : 'e.g. Built for the open road'
                   }
-                  className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm text-[#1C1C1C]"
+                  className="w-full bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
               </div>
             )}
@@ -499,7 +503,7 @@ export function JacketBuilderPage({
 
           {/* 9. Sizing */}
           <fieldset className="space-y-3">
-            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C]">
+            <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
               09. Fit &amp; Sizing
             </legend>
             <div className="flex gap-2">
@@ -508,8 +512,8 @@ export function JacketBuilderPage({
                 onClick={() => setConfig((c) => ({ ...c, fitType: 'standard' }))}
                 className={`flex-1 py-2.5 border text-xs font-semibold ${
                   config.fitType === 'standard'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-white text-[#1C1C1C] border-[#D8D8D5]'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                    : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31]'
                 }`}
               >
                 Standard Size (XS–4XL)
@@ -519,8 +523,8 @@ export function JacketBuilderPage({
                 onClick={() => setConfig((c) => ({ ...c, fitType: 'made-to-measure' }))}
                 className={`flex-1 py-2.5 border text-xs font-semibold ${
                   config.fitType === 'made-to-measure'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-white text-[#1C1C1C] border-[#D8D8D5]'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                    : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31]'
                 }`}
               >
                 Made-to-Measure (Included)
@@ -535,8 +539,8 @@ export function JacketBuilderPage({
                     onClick={() => setConfig((c) => ({ ...c, standardSize: s.code }))}
                     className={`py-2 border text-xs font-semibold ${
                       config.standardSize === s.code
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-white text-[#1C1C1C] border-[#D8D8D5]'
+                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31]'
                     }`}
                   >
                     {s.code}
@@ -547,18 +551,18 @@ export function JacketBuilderPage({
           </fieldset>
 
           {/* Final Add to Cart Action */}
-          <div className="pt-4 border-t border-[#E5E5E3] space-y-3">
+          <div className="pt-4 border-t border-[#E5E5E3] dark:border-[#262D31] space-y-3">
             <button
               type="button"
               onClick={handleAddBespokeToCart}
-              className="w-full py-4 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.16em] uppercase transition-colors flex items-center justify-center gap-2"
+              className="w-full py-4 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.16em] uppercase transition-colors flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span>Add Bespoke Jacket to Cart · {formatMoney(totalAED, currency)}</span>
             </button>
 
             {addedNotice && (
-              <p className="text-xs text-[#1C1C1C] font-medium flex items-center justify-center gap-1.5">
+              <p className="text-xs text-[#1C1C1C] dark:text-[#F4F3EE] font-medium flex items-center justify-center gap-1.5">
                 <Check className="w-4 h-4" aria-hidden="true" /> Custom jacket added to your
                 shopping bag.
               </p>
@@ -567,16 +571,16 @@ export function JacketBuilderPage({
         </div>
       </div>
 
-      {/* 7-Step Bespoke Process (Exact Process from thejacketmaker.ae) */}
-      <section className="mt-24 pt-16 border-t border-[#E5E5E3]">
+      {/* 7-Step Bespoke Process */}
+      <section className="mt-24 pt-16 border-t border-[#E5E5E3] dark:border-[#262D31]">
         <div className="max-w-2xl mb-12">
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] mb-2">
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
             The Process · How It Works
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] mb-3">
+          <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-3">
             Seven Guided Steps From Idea to Delivery
           </h2>
-          <p className="text-sm sm:text-base text-[#595959] leading-relaxed">
+          <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
             Every bespoke jacket begins with your vision and moves through a transparent,
             consultant-led journey ensuring comfort, confidence, and clarity from start to finish.
           </p>
@@ -584,14 +588,14 @@ export function JacketBuilderPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {BESPOKE_STEPS.map((s) => (
-            <div key={s.step} className="border border-[#E5E5E3] bg-white p-6">
-              <span className="font-display text-2xl font-semibold text-[#767676] tabular-nums">
+            <div key={s.step} className="border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6">
+              <span className="font-display text-2xl font-semibold text-[#767676] dark:text-[#8A8E91] tabular-nums">
                 {s.step}
               </span>
-              <h3 className="font-body text-sm font-semibold text-[#1C1C1C] mt-3 mb-2">
+              <h3 className="font-body text-sm font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mt-3 mb-2">
                 {s.title}
               </h3>
-              <p className="text-xs text-[#595959] leading-relaxed">{s.description}</p>
+              <p className="text-xs text-[#595959] dark:text-[#A8ACAF] leading-relaxed">{s.description}</p>
             </div>
           ))}
         </div>

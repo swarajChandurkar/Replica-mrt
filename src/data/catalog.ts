@@ -1,7 +1,8 @@
 import type { Product, ProductReview } from '../types';
 
 export const ASSETS = {
-  HERO_CAMPAIGN: '/src/assets/images/hero_black_friday_campaign_1795612825296.jpg',
+  HERO_CAMPAIGN: '/src/assets/images/hero_seamless_light_1795618421588.jpg',
+  HERO_CAMPAIGN_DARK: '/src/assets/images/hero_seamless_dark_1795618456107.jpg',
   IONIC_BLACK: '/src/assets/images/jacket_ionic_black_1795612820797.jpg',
   SHERIFF_SUEDE: '/src/assets/images/jacket_sheriff_suede_1795612825654.jpg',
   DEAN_BIKER_BROWN: '/src/assets/images/jacket_dean_biker_brown_1795612845028.jpg',
@@ -555,7 +556,7 @@ export const PRODUCTS: Product[] = [
 export const PRESS_QUOTES = [
   {
     outlet: 'FORBES',
-    quote: '“The Jacket Maker, where tech meets on-demand handcrafted leather jackets.”',
+    quote: '“Maison Valen, where modern tailoring meets on-demand handcrafted leather outerwear.”',
   },
   {
     outlet: 'GQ',
@@ -567,11 +568,11 @@ export const PRESS_QUOTES = [
   },
   {
     outlet: 'GEAR PATROL',
-    quote: '“The Jacket Maker’s range of stylish leather weekend bags ticks all the boxes.”',
+    quote: '“Maison Valen’s range of stylish leather weekend bags ticks all the boxes.”',
   },
   {
     outlet: 'BUSINESS INSIDER',
-    quote: '“For a brand-new leather jacket with bespoke fit, I recommend The Jacket Maker.”',
+    quote: '“For a brand-new leather jacket with bespoke fit, I recommend Maison Valen.”',
   },
   {
     outlet: 'ROBB REPORT',
@@ -626,8 +627,8 @@ export const CUSTOMER_REVIEWS: ProductReview[] = [
     location: 'Riyadh, KSA',
     rating: 5,
     date: 'August 2026',
-    title: 'My third bespoke jacket from The Jacket Maker',
-    body: 'This is the third made-to-order jacket I have commissioned from The Jacket Maker. Every single one fits impeccably, arrived quickly duty-free, and exceeds department store pieces twice the price.',
+    title: 'My third bespoke jacket from Maison Valen',
+    body: 'This is the third made-to-order jacket I have commissioned from Maison Valen. Every single one fits impeccably, arrived quickly duty-free, and exceeds department store pieces twice the price.',
     verifiedFit: 'Bespoke Custom',
   },
 ];
