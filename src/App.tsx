@@ -21,6 +21,7 @@ import type {
   CurrencyCode,
   CustomInquiry,
   OrderRecord,
+  PaymentMethod,
   Product,
 } from './types';
 import { calculateCartSummary } from './utils/commerce';
@@ -65,6 +66,7 @@ export default function App() {
 
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutPayment, setCheckoutPayment] = useState<PaymentMethod>('Card');
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
@@ -264,6 +266,7 @@ export default function App() {
             onToggleWishlist={toggleWishlist}
             onNavigate={navigate}
             onAddToCart={addToCart}
+            onSubmitInquiry={handleSubmitInquiry}
             onOpenSizeGuide={() => setSizeGuideOpen(true)}
           />
         )}
@@ -277,7 +280,11 @@ export default function App() {
         )}
 
         {page.view === 'customize' && (
-          <CustomizePage onNavigate={navigate} onSubmitInquiry={handleSubmitInquiry} />
+          <CustomizePage
+            currency={currency}
+            onNavigate={navigate}
+            onSubmitInquiry={handleSubmitInquiry}
+          />
         )}
 
         {page.view === 'brand' && <BrandStoryPage onNavigate={navigate} />}
@@ -312,7 +319,8 @@ export default function App() {
         onUpdateQty={updateCartQty}
         onRemoveItem={removeCartItem}
         onClose={() => setCartOpen(false)}
-        onProceedToCheckout={() => {
+        onProceedToCheckout={(preferredPayment) => {
+          setCheckoutPayment(preferredPayment || 'Card');
           setCartOpen(false);
           setCheckoutOpen(true);
         }}
@@ -324,6 +332,7 @@ export default function App() {
         items={cart}
         currency={currency}
         promoCode={promoCode}
+        initialPaymentMethod={checkoutPayment}
         onClose={() => setCheckoutOpen(false)}
         onCompleteOrder={handleCompleteOrder}
       />

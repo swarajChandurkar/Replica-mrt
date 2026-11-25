@@ -1,13 +1,27 @@
-import { useState, type FormEvent } from 'react';
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import {
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  ShoppingBag,
+  Star,
+  Volume2,
+  VolumeX,
+  X,
+} from 'lucide-react';
 import {
   ASSETS,
+  COMMUNITY_VIDEOS,
   CUSTOMER_REVIEWS,
   PRESS_QUOTES,
   PRODUCTS,
   STAR_SPOTLIGHT,
 } from '../data/catalog';
-import type { AppPage, CurrencyCode, CustomInquiry, Product } from '../types';
+import type { AppPage, CommunityVideo, CurrencyCode, CustomInquiry, Product } from '../types';
+import { formatMoney } from '../utils/commerce';
 import { ProductCard } from './ProductCard';
 import { SafeImage } from './SafeImage';
 
@@ -57,6 +71,18 @@ export function HomePage({
   const [pressIndex, setPressIndex] = useState(0);
   const [bestSellerTab, setBestSellerTab] = useState<'all' | 'men' | 'women' | 'suede'>('all');
   const [activePillar, setActivePillar] = useState<(typeof BESPOKE_TABS)[number]['id']>('made-for-you');
+  const [activeVideo, setActiveVideo] = useState<CommunityVideo | null>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [reelProgress, setReelProgress] = useState(0);
+
+  useEffect(() => {
+    if (!activeVideo || !isPlaying) return;
+    const timer = window.setInterval(() => {
+      setReelProgress((prev) => (prev >= 100 ? 0 : prev + 2));
+    }, 180);
+    return () => window.clearInterval(timer);
+  }, [activeVideo, isPlaying]);
 
   // Custom Leather Jacket Inquiry Form State
   const [fullName, setFullName] = useState('');
@@ -160,7 +186,7 @@ export function HomePage({
             <SafeImage
               src={theme === 'dark' ? ASSETS.HERO_CAMPAIGN_DARK : ASSETS.HERO_CAMPAIGN}
               alt="Maison Valen UAE Black Friday Event models wearing full-grain handcrafted black biker, cognac cafe racer, and shearling aviator leather jackets"
-              className="w-full h-full object-cover object-[78%_14%] lg:object-[92%_16%] hero-seamless-mask"
+              className="w-full h-full object-cover object-[78%_8%] lg:object-[92%_6%] hero-seamless-mask"
             />
             {/* Seamless left-side canvas integration & mobile readability feather */}
             <div
@@ -558,6 +584,89 @@ export function HomePage({
           ))}
         </div>
 
+        {/* COMMUNITY IN ACTION — Shoppable Customer & Influencer Videos */}
+        <div className="mb-20">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
+                Community In Action
+              </p>
+              <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+                Watch Real Fits &amp; Shop The Look
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-[#595959] dark:text-[#A8ACAF] max-w-md">
+              Tap any customer or creator reel to inspect drape, leather patina, and shop the exact
+              jacket in seconds.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {COMMUNITY_VIDEOS.map((vid) => (
+              <div
+                key={vid.id}
+                className="group border border-[#E5E5E3] dark:border-[#252B2F] bg-white dark:bg-[#14191C] flex flex-col"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveVideo(vid);
+                    setIsPlaying(true);
+                    setReelProgress(0);
+                  }}
+                  aria-label={`Play community video by ${vid.creatorHandle}: ${vid.title}`}
+                  className="relative aspect-[9/12] bg-[#14191C] overflow-hidden text-left"
+                >
+                  <SafeImage
+                    src={vid.posterImage}
+                    alt={`${vid.creatorHandle} wearing ${vid.productName}`}
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/25"
+                  />
+                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[10.5px] font-semibold text-white/90">
+                    <span className="bg-black/60 px-2 py-0.5 tracking-wide">{vid.views} views</span>
+                    <span className="bg-black/60 px-2 py-0.5 tabular-nums">{vid.duration}</span>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="w-12 h-12 rounded-full bg-white/90 text-[#141414] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                      <Play className="w-5 h-5 fill-current ml-0.5" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                    <p className="text-[11px] font-semibold tracking-wide text-white/85">
+                      {vid.creatorHandle}
+                    </p>
+                    <p className="text-xs font-medium leading-snug mt-0.5 line-clamp-2">
+                      {vid.title}
+                    </p>
+                  </div>
+                </button>
+
+                <div className="p-3.5 flex items-center justify-between gap-2 mt-auto">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] truncate">
+                      {vid.productName}
+                    </p>
+                    <p className="text-[11.5px] text-[#595959] dark:text-[#A8ACAF] tabular-nums">
+                      {formatMoney(vid.priceAED, currency)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate({ view: 'product', slug: vid.productSlug })}
+                    className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE] hover:underline whitespace-nowrap shrink-0"
+                  >
+                    Shop
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Star Spotlight */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
@@ -808,13 +917,13 @@ export function HomePage({
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
                 <p className="text-xs text-[#767676] dark:text-[#8A8E91]">
-                  No obligation · Complimentary illustration preview before production.
+                  No Minimum Order Quantity (1+ Units) · Free consultation &amp; 2D illustration preview.
                 </p>
                 <button
                   type="submit"
                   className="px-9 py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.16em] uppercase transition-colors"
                 >
-                  Submit Custom Request
+                  Start Free Consultation
                 </button>
               </div>
             </form>
@@ -844,6 +953,133 @@ export function HomePage({
           </div>
         </div>
       </section>
+
+      {/* Shoppable Community Video Lightbox Modal */}
+      {activeVideo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Community video by ${activeVideo.creatorHandle}`}
+        >
+          <div className="bg-white dark:bg-[#14191C] border border-[#E5E5E3] dark:border-[#262D31] w-full max-w-3xl overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl">
+            {/* Simulated Video Reel Stage */}
+            <div className="md:col-span-6 relative bg-[#0B0E10] aspect-[9/12] md:aspect-auto md:min-h-[460px] overflow-hidden">
+              <SafeImage
+                src={reelProgress > 55 ? activeVideo.secondaryFrameImage : activeVideo.posterImage}
+                alt={activeVideo.title}
+                className={`w-full h-full object-cover object-top transition-transform duration-700 ${
+                  isPlaying ? 'scale-[1.06]' : 'scale-100'
+                }`}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40"
+              />
+              {/* Top Progress Scrubber */}
+              <div className="absolute top-3 left-3 right-3 h-1 bg-white/30 overflow-hidden">
+                <div
+                  className="h-full bg-white transition-all duration-200"
+                  style={{ width: `${reelProgress}%` }}
+                />
+              </div>
+              <div className="absolute top-6 left-4 right-4 flex items-center justify-between text-xs text-white">
+                <span className="font-semibold">{activeVideo.creatorHandle}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsPlaying((p) => !p)}
+                    aria-label={isPlaying ? 'Pause video reel' : 'Play video reel'}
+                    className="p-1.5 bg-black/55 hover:bg-black/80 text-white"
+                  >
+                    {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsMuted((m) => !m)}
+                    aria-label={isMuted ? 'Unmute video reel' : 'Mute video reel'}
+                    className="p-1.5 bg-black/55 hover:bg-black/80 text-white"
+                  >
+                    {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-white/75">
+                  {activeVideo.location} · {activeVideo.duration}
+                </p>
+                <p className="text-sm font-medium mt-0.5">{activeVideo.title}</p>
+              </div>
+            </div>
+
+            {/* Shoppable Product Panel */}
+            <div className="md:col-span-6 p-6 flex flex-col justify-between text-[#1C1C1C] dark:text-[#F4F3EE]">
+              <div>
+                <div className="flex items-start justify-between gap-2 pb-4 border-b border-[#EFEFED] dark:border-[#23292D]">
+                  <div>
+                    <p className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91]">
+                      Shoppable Community Reel
+                    </p>
+                    <h3 className="font-display text-2xl font-semibold mt-1">
+                      {activeVideo.productName}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveVideo(null)}
+                    aria-label="Close community video"
+                    className="p-1.5 text-[#595959] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]"
+                  >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                </div>
+
+                <p className="mt-4 text-sm text-[#4A4A4A] dark:text-[#B0B3B5] italic leading-relaxed">
+                  “{activeVideo.quote}”
+                </p>
+                <p className="mt-3 text-xs text-[#767676] dark:text-[#8A8E91]">
+                  {activeVideo.creatorRole} · {activeVideo.fitNote}
+                </p>
+
+                <div className="mt-6 p-4 bg-[#FAF9F7] dark:bg-[#0E1214] border border-[#E5E5E3] dark:border-[#262D31]">
+                  <p className="text-[11px] uppercase tracking-[0.12em] text-[#767676] dark:text-[#8A8E91]">
+                    Featured Piece
+                  </p>
+                  <p className="font-display text-2xl font-semibold mt-1 tabular-nums">
+                    {formatMoney(activeVideo.priceAED, currency)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const matched = PRODUCTS.find((p) => p.slug === activeVideo.productSlug);
+                    if (matched) onQuickAdd(matched);
+                    setActiveVideo(null);
+                  }}
+                  className="w-full py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase inline-flex items-center justify-center gap-2 transition-colors"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Quick Add To Cart</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const slug = activeVideo.productSlug;
+                    setActiveVideo(null);
+                    onNavigate({ view: 'product', slug });
+                  }}
+                  className="w-full py-3 border border-[#1C1C1C] dark:border-[#F4F3EE] text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-[#FAF9F7] dark:hover:bg-[#1A2024] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+                >
+                  View Full Product Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

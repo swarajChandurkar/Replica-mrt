@@ -1,4 +1,4 @@
-import type { Product, ProductReview } from '../types';
+import type { CommunityVideo, Product, ProductReview } from '../types';
 
 export const ASSETS = {
   HERO_CAMPAIGN: '/src/assets/images/hero_seamless_light_1795618421588.jpg',
@@ -23,6 +23,16 @@ export const STANDARD_SIZES = [
   { code: '2XL', eu: 'EU 58-60' },
   { code: '3XL', eu: 'EU 62' },
   { code: '4XL', eu: 'EU 64-66' },
+] as const;
+
+export const WOMEN_STANDARD_SIZES = [
+  { code: 'XXS', eu: 'EU 32' },
+  { code: 'XS', eu: 'EU 34' },
+  { code: 'S', eu: 'EU 36-38' },
+  { code: 'M', eu: 'EU 40' },
+  { code: 'L', eu: 'EU 42-44' },
+  { code: 'XL', eu: 'EU 46' },
+  { code: '2XL', eu: 'EU 48-50' },
 ] as const;
 
 export const PRODUCTS: Product[] = [
@@ -664,48 +674,115 @@ export const STAR_SPOTLIGHT = [
   },
 ];
 
+export const COMMUNITY_VIDEOS: CommunityVideo[] = [
+  {
+    id: 'vid-ionic-dubai',
+    creatorHandle: '@khalid.menswear',
+    creatorRole: 'Verified Buyer · Dubai',
+    location: 'DIFC, Dubai',
+    title: 'Unboxing & 30-Day Patina Check: Ionic Black',
+    duration: '0:42',
+    views: '48.2K',
+    productSlug: 'ionic-black-leather-jacket',
+    productName: 'Ionic Black Leather Jacket',
+    priceAED: 976,
+    posterImage: ASSETS.IONIC_BLACK,
+    secondaryFrameImage: ASSETS.BESPOKE_CRAFT,
+    quote: 'Zero stiff break-in period—the full-grain sheepskin drapes cleanly over both tees and fine merino.',
+    fitNote: 'Wearing Size M (180 cm, 77 kg) · Prime Delivery',
+  },
+  {
+    id: 'vid-legacy-london',
+    creatorHandle: '@nadia.atelier',
+    creatorRole: 'Stylist & Creator',
+    location: 'Downtown Dubai',
+    title: 'How I Style the Legacy Lambskin Biker Day to Night',
+    duration: '0:56',
+    views: '62.9K',
+    productSlug: 'legacy-women-black-leather-biker-jacket',
+    productName: 'Legacy Black Leather Biker Jacket',
+    priceAED: 1008,
+    posterImage: ASSETS.WOMEN_BIKER_BLACK,
+    secondaryFrameImage: ASSETS.WOMEN_CAMEL_COAT,
+    quote: 'Ordered Made-to-Measure with custom sleeve length—arrived tailored to the millimeter.',
+    fitNote: 'Wearing Made-to-Measure (166 cm) · Tailored Fit',
+  },
+  {
+    id: 'vid-sheriff-suede',
+    creatorHandle: '@marcus.drake',
+    creatorRole: 'Menswear Editor',
+    location: 'Abu Dhabi',
+    title: 'Why Velvet-Nap Goatskin Suede Beats Calfskin in Mild Winters',
+    duration: '1:08',
+    views: '39.4K',
+    productSlug: 'sheriff-brown-suede-jacket',
+    productName: 'Sheriff Brown Suede Jacket',
+    priceAED: 1336,
+    posterImage: ASSETS.SHERIFF_SUEDE,
+    secondaryFrameImage: ASSETS.BLAIN_MOCHA_BOMBER,
+    quote: 'The tobacco suede nap catches golden hour light unlike anything else in my wardrobe.',
+    fitNote: 'Wearing Size L (184 cm, 84 kg) · Prime Delivery',
+  },
+  {
+    id: 'vid-dean-moto',
+    creatorHandle: '@tarik.rides',
+    creatorRole: 'Cafe Racer Collector',
+    location: 'Jumeirah, UAE',
+    title: 'Close-Up on Hand-Burnished Cowhide & YKK Brass Hardware',
+    duration: '0:49',
+    views: '54.1K',
+    productSlug: 'dean-brown-leather-biker-jacket',
+    productName: 'Dean Brown Leather Biker Jacket',
+    priceAED: 1008,
+    posterImage: ASSETS.DEAN_BIKER_BROWN,
+    secondaryFrameImage: ASSETS.BESPOKE_CRAFT,
+    quote: 'Substantial cowhide weight, quilted shoulders, and authentic YKK zippers built to last decades.',
+    fitNote: 'Wearing Size M · Custom Matte Black Hardware Swap',
+  },
+];
+
 export const BESPOKE_STEPS = [
   {
     step: '01',
-    title: 'Order Placement',
+    title: 'Order or Free Consultation',
     description:
-      'Place your order with your preferred leather, finish, lining, and hardware—or share your own sketch and vision with our atelier.',
+      'Place a $400+ custom builder order or submit a no-obligation bespoke request form with zero minimum order quantity.',
   },
   {
     step: '02',
-    title: 'Design Consultation & Review',
+    title: 'Design Consultation',
     description:
-      'A dedicated design consultant reviews your specifications, recommends leather weights and refinements, and confirms every detail with you.',
+      'A dedicated design consultant contacts you directly to finalize hides, Pantone shades, trim, pricing, and delivery dates.',
   },
   {
     step: '03',
-    title: 'Illustration Creation',
+    title: 'Digital Illustration Sign-Off',
     description:
-      'We prepare a hyper-realistic visual mockup of your custom jacket so you can review proportions and request tweaks before cutting begins.',
+      'Our creative team prepares a detailed 2D digital mockup of your jacket for your approval before a single piece of leather is cut.',
   },
   {
     step: '04',
-    title: 'Measurements & Verification',
+    title: 'Measurement Verification',
     description:
-      'Your consultant guides you through straightforward measurement steps and double-checks every figure for an uncompromising bespoke fit.',
+      'Your consultant walks you through sizing using guided measurement videos—or replicates the exact fit of a jacket you already own.',
   },
   {
     step: '05',
-    title: 'Single-Craftsman Production',
+    title: '6-Stage Atelier Production',
     description:
-      'Once approved, one master artisan cuts, stitches, and finishes your jacket by hand—never split across a rushed assembly line.',
+      'Our workshop executes pattern making, hide & lining sourcing, hand cutting & stitching, embroidery/3D hardware, and multi-point QC.',
   },
   {
     step: '06',
-    title: 'Photoshoot Sharing',
+    title: 'Pre-Ship Photoshoot',
     description:
-      'Upon completion, we photograph your finished garment in detail and share high-resolution studio photos for your final approval.',
+      'Before boxing, we photograph your finished bespoke jacket from every angle and send studio images for your final sign-off.',
   },
   {
     step: '07',
-    title: 'Approval & Duty-Free Delivery',
+    title: 'Free Worldwide Express Delivery',
     description:
-      'Once you approve every stitch, your jacket is packed in our signature front-lock mailer and shipped free with all UAE duties covered.',
+      'Upon your approval, your piece ships worldwide via free express courier (10–12 weeks total pipeline) with all customs duties prepaid (DDP).',
   },
 ];
 
@@ -721,11 +798,11 @@ export const MEN_SIZE_CHART = [
 ];
 
 export const WOMEN_SIZE_CHART = [
+  { size: 'XXS', eu: '32', chestIn: '29–30', waistIn: '22–23', sleeveIn: '22.5', chestCm: '74–76', waistCm: '56–59', sleeveCm: '57' },
   { size: 'XS', eu: '34', chestIn: '31–32', waistIn: '24–25', sleeveIn: '23.0', chestCm: '79–81', waistCm: '61–64', sleeveCm: '58.5' },
   { size: 'S', eu: '36–38', chestIn: '33–34', waistIn: '26–27', sleeveIn: '23.5', chestCm: '84–86', waistCm: '66–69', sleeveCm: '59.5' },
   { size: 'M', eu: '40', chestIn: '35–36', waistIn: '28–29', sleeveIn: '24.0', chestCm: '89–91', waistCm: '71–74', sleeveCm: '61' },
   { size: 'L', eu: '42–44', chestIn: '37–39', waistIn: '30–32', sleeveIn: '24.5', chestCm: '94–99', waistCm: '76–81', sleeveCm: '62' },
   { size: 'XL', eu: '46', chestIn: '40–42', waistIn: '33–35', sleeveIn: '25.0', chestCm: '102–107', waistCm: '84–89', sleeveCm: '63.5' },
   { size: '2XL', eu: '48–50', chestIn: '43–45', waistIn: '36–38', sleeveIn: '25.5', chestCm: '109–114', waistCm: '91–97', sleeveCm: '65' },
-  { size: '3XL', eu: '52', chestIn: '46–48', waistIn: '39–41', sleeveIn: '26.0', chestCm: '117–122', waistCm: '99–104', sleeveCm: '66' },
 ];

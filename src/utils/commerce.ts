@@ -1,72 +1,80 @@
+import { CURRENCIES, CURRENCY_LIST, POPULAR_CURRENCY_CODES, USD_PER_AED } from '../data/currencies';
 import type {
   BuilderConfig,
   CartItem,
   CurrencyCode,
-  CurrencyConfig,
   Product,
   ProductCategory,
 } from '../types';
 
-export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  AED: {
-    code: 'AED',
-    country: 'United Arab Emirates',
-    symbol: 'Dhs.',
-    label: 'United Arab Emirates (AED د.إ)',
-    rateFromAED: 1,
-  },
-  USD: {
-    code: 'USD',
-    country: 'United States',
-    symbol: '$',
-    label: 'United States (USD $)',
-    rateFromAED: 0.2723,
-  },
-  GBP: {
-    code: 'GBP',
-    country: 'United Kingdom',
-    symbol: '£',
-    label: 'United Kingdom (GBP £)',
-    rateFromAED: 0.2145,
-  },
-  EUR: {
-    code: 'EUR',
-    country: 'European Union',
-    symbol: '€',
-    label: 'European Union (EUR €)',
-    rateFromAED: 0.2512,
-  },
-  SAR: {
-    code: 'SAR',
-    country: 'Saudi Arabia',
-    symbol: 'SAR',
-    label: 'Saudi Arabia (SAR ر.س)',
-    rateFromAED: 1.021,
-  },
-};
+export { CURRENCIES, CURRENCY_LIST, POPULAR_CURRENCY_CODES, USD_PER_AED };
 
-export const MADE_TO_MEASURE_SURCHARGE_AED = 200;
-export const BUILDER_BASE_PRICE_AED = 5776;
+/** Helper to anchor USD pricing cleanly into AED (1 USD = 3.6725 AED) */
+export const AED_PER_USD = 3.6725;
+export function usdToAED(usd: number): number {
+  return Math.round(usd * AED_PER_USD * 100) / 100;
+}
+
+/** Exact $50.00 USD Made-to-Measure surcharge */
+export const MADE_TO_MEASURE_SURCHARGE_AED = usdToAED(50);
+
+/** Exact $400.00 USD Modular Custom Jacket Builder starting price */
+export const BUILDER_BASE_PRICE_AED = usdToAED(400);
+
+/** Custom Pantone color matching surcharge (+$100.00 USD) */
+export const BUILDER_PANTONE_SURCHARGE_AED = usdToAED(100);
 
 export function convertFromAED(amountAED: number, currency: CurrencyCode): number {
-  const cfg = CURRENCIES[currency];
+  const cfg = CURRENCIES[currency] || CURRENCIES.AED;
   return Math.round(amountAED * cfg.rateFromAED * 100) / 100;
 }
 
 export function formatMoney(amountAED: number, currency: CurrencyCode): string {
-  const cfg = CURRENCIES[currency];
+  const cfg = CURRENCIES[currency] || CURRENCIES.AED;
   const converted = convertFromAED(amountAED, currency);
+  const noDecimals = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'COP', 'LBP', 'PYG', 'UGX', 'RWF'].includes(
+    cfg.code
+  );
   const formattedNumber = converted.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: noDecimals ? 0 : 2,
+    maximumFractionDigits: noDecimals ? 0 : 2,
   });
-  if (currency === 'AED') {
+  if (cfg.code === 'AED') {
     return `Dhs. ${formattedNumber} AED`;
   }
-  if (currency === 'SAR') {
-    return `SAR ${formattedNumber}`;
+  if (cfg.symbol.length > 2 || /^[A-Z]{3}$/.test(cfg.symbol)) {
+    return `${cfg.symbol} ${formattedNumber}`;
   }
   return `${cfg.symbol}${formattedNumber}`;
+}
+
+export interface InstallmentPlan {
+  biweeklyAmountAED: number;
+  monthly12AmountAED: number;
+  aprLabel: string;
+  qualifiesForMonthly: boolean;
+}
+
+/**
+ * Computes Shop Pay Installments (backed by Affirm):
+ * - 4 interest-free biweekly payments at 0% APR
+ * - 12-month monthly financing (0%–36% APR; representative 15% APR matches $36.10/mo on $400)
+ */
+export function calculateInstallments(amountAED: number): InstallmentPlan {
+  const biweeklyAmountAED = Math.round((amountAED / 4) * 100) / 100;
+  const monthlyRate = 0.15 / 12;
+  const n = 12;
+  const monthlyFactor =
+    (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+  const monthly12AmountAED = Math.round(amountAED * monthlyFactor * 100) / 100;
+  const amountUSD = convertFromAED(amountAED, 'USD');
+
+  return {
+    biweeklyAmountAED,
+    monthly12AmountAED,
+    aprLabel: '0%–36% APR',
+    qualifiesForMonthly: amountUSD >= 150,
+  };
 }
 
 export interface PromoResult {
@@ -155,52 +163,100 @@ export function calculateCartSummary(items: CartItem[], promoCode?: string): Car
   };
 }
 
-export const BUILDER_STYLE_DELTAS: Record<BuilderConfig['baseStyle'], { label: string; deltaAED: number }> = {
+/** Base Silhouette: -$50 Vest to +$150 Full-Length Coat */
+export const BUILDER_STYLE_DELTAS: Record<
+  BuilderConfig['baseStyle'],
+  { label: string; deltaAED: number }
+> = {
   'cafe-racer': { label: 'Leather Jacket (Cafe Racer)', deltaAED: 0 },
   'double-rider': { label: 'Leather Jacket (Double Rider)', deltaAED: 0 },
   'leather-bomber': { label: 'Leather Bomber', deltaAED: 0 },
-  'leather-vest': { label: 'Leather Vest', deltaAED: -722 },
-  'mid-length-coat': { label: 'Mid Length Coat', deltaAED: 1444 },
-  'full-length-coat': { label: 'Full Length Coat', deltaAED: 2166 },
+  'leather-vest': { label: 'Leather Vest', deltaAED: usdToAED(-50) },
+  'mid-length-coat': { label: 'Mid Length Coat', deltaAED: usdToAED(100) },
+  'full-length-coat': { label: 'Full Length Coat', deltaAED: usdToAED(150) },
 };
 
-export const BUILDER_LEATHER_DELTAS: Record<BuilderConfig['leatherType'], { label: string; deltaAED: number; note: string }> = {
+/** Hide Type: +$50 to +$150 */
+export const BUILDER_LEATHER_DELTAS: Record<
+  BuilderConfig['leatherType'],
+  { label: string; deltaAED: number; note: string }
+> = {
   sheepskin: { label: 'Sheepskin', deltaAED: 0, note: 'Supple, lightweight full-grain softness' },
-  goatskin: { label: 'Goatskin', deltaAED: 722, note: 'Pebbled grain with exceptional durability' },
-  cowhide: { label: 'Cowhide', deltaAED: 722, note: 'Heavyweight, structured protective hide' },
-  'calf-hide': { label: 'Calf Hide', deltaAED: 2166, note: 'Ultra-fine luxury dress leather grain' },
+  goatskin: {
+    label: 'Goatskin',
+    deltaAED: usdToAED(50),
+    note: 'Pebbled grain with exceptional durability',
+  },
+  cowhide: {
+    label: 'Cowhide',
+    deltaAED: usdToAED(50),
+    note: 'Heavyweight, structured protective hide',
+  },
+  'calf-hide': {
+    label: 'Calf Hide',
+    deltaAED: usdToAED(150),
+    note: 'Ultra-fine luxury dress leather grain',
+  },
 };
 
-export const BUILDER_FINISH_DELTAS: Record<BuilderConfig['leatherFinish'], { label: string; deltaAED: number }> = {
+/** Leather Finish: +$50 to +$200 */
+export const BUILDER_FINISH_DELTAS: Record<
+  BuilderConfig['leatherFinish'],
+  { label: string; deltaAED: number }
+> = {
   'semi-aniline': { label: 'Semi Aniline', deltaAED: 0 },
-  aniline: { label: 'Aniline', deltaAED: 1444 },
-  burnished: { label: 'Burnished', deltaAED: 722 },
-  nubuck: { label: 'Nubuck', deltaAED: 722 },
-  suede: { label: 'Suede', deltaAED: 722 },
-  textured: { label: 'Textured', deltaAED: 2888 },
+  burnished: { label: 'Burnished', deltaAED: usdToAED(50) },
+  nubuck: { label: 'Nubuck', deltaAED: usdToAED(50) },
+  suede: { label: 'Suede', deltaAED: usdToAED(50) },
+  aniline: { label: 'Aniline', deltaAED: usdToAED(100) },
+  textured: { label: 'Textured', deltaAED: usdToAED(200) },
 };
 
-export const BUILDER_LINING_DELTAS: Record<BuilderConfig['lining'], { label: string; deltaAED: number }> = {
+/** Hardware Finish: +$20 Matte Black */
+export const BUILDER_HARDWARE_DELTAS: Record<
+  BuilderConfig['hardware'],
+  { label: string; deltaAED: number }
+> = {
+  Silver: { label: 'Brushed Silver', deltaAED: 0 },
+  'Antique Brass': { label: 'Antique Brass', deltaAED: 0 },
+  Gunmetal: { label: 'Gunmetal', deltaAED: 0 },
+  'Matte Black': { label: 'Matte Black YKK', deltaAED: usdToAED(20) },
+  'Brushed Gold': { label: 'Brushed Gold', deltaAED: 0 },
+};
+
+/** Inner Lining: +$50 to +$150 */
+export const BUILDER_LINING_DELTAS: Record<
+  BuilderConfig['lining'],
+  { label: string; deltaAED: number }
+> = {
   'quilted-polyester': { label: 'Quilted Polyester', deltaAED: 0 },
   'plain-polyester': { label: 'Plain Polyester', deltaAED: 0 },
-  cotton: { label: 'Breathable Cotton', deltaAED: 722 },
-  'faux-fur': { label: 'Shearling Faux Fur', deltaAED: 2166 },
-  'custom-printed': { label: 'Custom Printed Silk-Touch', deltaAED: 1444 },
+  cotton: { label: 'Breathable Cotton', deltaAED: usdToAED(50) },
+  'custom-printed': { label: 'Custom Printed Silk-Touch', deltaAED: usdToAED(100) },
+  'faux-fur': { label: 'Shearling Faux Fur', deltaAED: usdToAED(150) },
 };
 
-export const BUILDER_EMBROIDERY_DELTAS: Record<BuilderConfig['exteriorEmbroidery'], { label: string; deltaAED: number }> = {
+/** Exterior Embroidery: +$50 to +$100 */
+export const BUILDER_EMBROIDERY_DELTAS: Record<
+  BuilderConfig['exteriorEmbroidery'],
+  { label: string; deltaAED: number }
+> = {
   none: { label: 'None (Clean Exterior)', deltaAED: 0 },
-  'left-chest': { label: 'Left Chest Artwork/Logo', deltaAED: 722 },
-  'right-chest': { label: 'Right Chest Artwork/Logo', deltaAED: 722 },
-  'left-arm': { label: 'Left Arm Artwork/Logo', deltaAED: 722 },
-  'right-arm': { label: 'Right Arm Artwork/Logo', deltaAED: 722 },
-  back: { label: 'Full Back Artwork/Logo', deltaAED: 1444 },
+  'left-chest': { label: 'Left Chest Artwork/Logo', deltaAED: usdToAED(50) },
+  'right-chest': { label: 'Right Chest Artwork/Logo', deltaAED: usdToAED(50) },
+  'left-arm': { label: 'Left Arm Artwork/Logo', deltaAED: usdToAED(50) },
+  'right-arm': { label: 'Right Arm Artwork/Logo', deltaAED: usdToAED(50) },
+  back: { label: 'Full Back Artwork/Logo', deltaAED: usdToAED(100) },
 };
 
-export const BUILDER_PERSONALIZATION_DELTAS: Record<BuilderConfig['innerPersonalization'], { label: string; deltaAED: number }> = {
+/** Inner Pocket Embroidery: +$50 to +$100 */
+export const BUILDER_PERSONALIZATION_DELTAS: Record<
+  BuilderConfig['innerPersonalization'],
+  { label: string; deltaAED: number }
+> = {
   none: { label: 'No Inner Embroidery', deltaAED: 0 },
-  initials: { label: 'Initials Embroidery (Inner Pocket)', deltaAED: 722 },
-  phrase: { label: 'Phrase Embroidery (Inner Pocket)', deltaAED: 1155.2 },
+  initials: { label: 'Initials Embroidery (Inner Pocket)', deltaAED: usdToAED(50) },
+  phrase: { label: 'Phrase Embroidery (Inner Pocket)', deltaAED: usdToAED(100) },
 };
 
 export function calculateBuilderPriceAED(config: BuilderConfig): number {
@@ -209,6 +265,8 @@ export function calculateBuilderPriceAED(config: BuilderConfig): number {
     BUILDER_STYLE_DELTAS[config.baseStyle].deltaAED +
     BUILDER_LEATHER_DELTAS[config.leatherType].deltaAED +
     BUILDER_FINISH_DELTAS[config.leatherFinish].deltaAED +
+    (config.isCustomPantone ? BUILDER_PANTONE_SURCHARGE_AED : 0) +
+    BUILDER_HARDWARE_DELTAS[config.hardware].deltaAED +
     BUILDER_LINING_DELTAS[config.lining].deltaAED +
     BUILDER_EMBROIDERY_DELTAS[config.exteriorEmbroidery].deltaAED +
     BUILDER_PERSONALIZATION_DELTAS[config.innerPersonalization].deltaAED;
@@ -296,7 +354,7 @@ export function calculateCorporateQuote(
   productTier: 'leather-jacket' | 'suede-bomber' | 'leather-bag' | 'tailored-suit',
   includeEmbossing: boolean
 ): CorporateQuoteResult {
-  const safeQty = Math.max(10, Math.min(1000, Math.floor(quantity || 10)));
+  const safeQty = Math.max(1, Math.min(1000, Math.floor(quantity || 1)));
   const baseRates: Record<typeof productTier, number> = {
     'leather-jacket': 1180,
     'suede-bomber': 1120,
@@ -305,10 +363,13 @@ export function calculateCorporateQuote(
   };
   const unitBaseAED = baseRates[productTier] + (includeEmbossing ? 85 : 0);
 
-  let discountPercent = 15;
+  let discountPercent = 0;
   if (safeQty >= 100) discountPercent = 38;
   else if (safeQty >= 50) discountPercent = 30;
   else if (safeQty >= 25) discountPercent = 22;
+  else if (safeQty >= 10) discountPercent = 15;
+  else if (safeQty >= 6) discountPercent = 10;
+  else if (safeQty >= 2) discountPercent = 5;
 
   const unitFinalAED = Math.round(unitBaseAED * (1 - discountPercent / 100) * 100) / 100;
   const totalAED = Math.round(unitFinalAED * safeQty * 100) / 100;

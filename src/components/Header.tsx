@@ -12,7 +12,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import type { AppPage, CurrencyCode } from '../types';
-import { CURRENCIES } from '../utils/commerce';
+import { CURRENCIES, CURRENCY_LIST, POPULAR_CURRENCY_CODES } from '../utils/commerce';
 
 interface HeaderProps {
   page: AppPage;
@@ -57,6 +57,22 @@ export function Header({
   const [announcementIdx, setAnnouncementIdx] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [currencyQuery, setCurrencyQuery] = useState('');
+
+  const activeCurrency = CURRENCIES[currency] || CURRENCIES.AED;
+  const filteredCurrencies = currencyQuery.trim()
+    ? CURRENCY_LIST.filter((c) => {
+        const q = currencyQuery.trim().toLowerCase();
+        return (
+          c.code.toLowerCase().includes(q) ||
+          c.country.toLowerCase().includes(q) ||
+          c.symbol.toLowerCase().includes(q)
+        );
+      })
+    : [
+        ...POPULAR_CURRENCY_CODES.map((code) => CURRENCIES[code]).filter(Boolean),
+        ...CURRENCY_LIST.filter((c) => !POPULAR_CURRENCY_CODES.includes(c.code)),
+      ];
 
   const activeAnnouncement = ANNOUNCEMENTS[announcementIdx];
 
@@ -184,42 +200,66 @@ export function Header({
 
         {/* Right: Currency, Theme Toggle, Account, Cart */}
         <div className="flex items-center justify-end gap-2.5 sm:gap-4 flex-1">
-          {/* Currency Selector */}
+          {/* Currency Selector — 100+ World Currencies */}
           <div className="relative hidden md:block">
             <button
               type="button"
               aria-label="Select currency"
               aria-expanded={currencyOpen}
-              onClick={() => setCurrencyOpen((v) => !v)}
+              onClick={() => {
+                setCurrencyOpen((v) => !v);
+                setCurrencyQuery('');
+              }}
               className="inline-flex items-center gap-1.5 text-xs text-[#595959] dark:text-[#B0B3B5] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] py-2 whitespace-nowrap shrink-0"
             >
-              <span>{CURRENCIES[currency].label}</span>
+              <span>{activeCurrency.label}</span>
               <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
             {currencyOpen && (
               <div
                 role="menu"
-                className="absolute right-0 mt-1 w-64 bg-white dark:bg-[#151A1D] border border-[#E5E5E3] dark:border-[#262D31] shadow-lg py-1.5 z-50"
+                className="absolute right-0 mt-1 w-72 bg-white dark:bg-[#151A1D] border border-[#E5E5E3] dark:border-[#262D31] shadow-xl z-50"
               >
-                {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
-                  <button
-                    key={code}
-                    type="button"
-                    role="menuitem"
-                    onClick={() => {
-                      onCurrencyChange(code);
-                      setCurrencyOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-xs transition-colors flex items-center justify-between ${
-                      currency === code
-                        ? 'bg-[#F4F4F2] dark:bg-[#1F262A] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]'
-                        : 'text-[#595959] dark:text-[#B0B3B5] hover:bg-[#FAF9F7] dark:hover:bg-[#1A2024] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
-                    }`}
-                  >
-                    <span>{CURRENCIES[code].label}</span>
-                    {currency === code && <span className="text-[11px]">Active</span>}
-                  </button>
-                ))}
+                <div className="p-2.5 border-b border-[#EFEFED] dark:border-[#23292D]">
+                  <label htmlFor="currency-search" className="sr-only">
+                    Search {CURRENCY_LIST.length} currencies
+                  </label>
+                  <input
+                    id="currency-search"
+                    type="search"
+                    value={currencyQuery}
+                    onChange={(e) => setCurrencyQuery(e.target.value)}
+                    placeholder={`Search ${CURRENCY_LIST.length} currencies (USD, GBP, EUR...)`}
+                    className="w-full bg-[#FAF9F7] dark:bg-[#0E1214] border border-[#D8D8D5] dark:border-[#2B3237] px-2.5 py-1.5 text-xs text-[#1C1C1C] dark:text-[#F4F3EE] placeholder:text-[#767676] dark:placeholder:text-[#707579]"
+                  />
+                </div>
+                <div className="max-h-72 overflow-y-auto py-1">
+                  {filteredCurrencies.map((cfg) => (
+                    <button
+                      key={cfg.code}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        onCurrencyChange(cfg.code);
+                        setCurrencyOpen(false);
+                        setCurrencyQuery('');
+                      }}
+                      className={`w-full text-left px-3.5 py-2 text-xs transition-colors flex items-center justify-between gap-2 ${
+                        currency === cfg.code
+                          ? 'bg-[#F4F4F2] dark:bg-[#1F262A] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]'
+                          : 'text-[#595959] dark:text-[#B0B3B5] hover:bg-[#FAF9F7] dark:hover:bg-[#1A2024] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
+                      }`}
+                    >
+                      <span className="truncate">{cfg.label}</span>
+                      {currency === cfg.code && <span className="text-[10.5px] shrink-0">Active</span>}
+                    </button>
+                  ))}
+                  {filteredCurrencies.length === 0 && (
+                    <p className="px-3.5 py-4 text-xs text-[#767676] dark:text-[#8A8E91] text-center">
+                      No matching currency found.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -343,9 +383,9 @@ export function Header({
                 onChange={(e) => onCurrencyChange(e.target.value as CurrencyCode)}
                 className="w-full border border-[#D8D8D5] dark:border-[#2B3237] px-3 py-2.5 text-xs bg-white dark:bg-[#171D20] text-[#1C1C1C] dark:text-[#F4F3EE]"
               >
-                {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
-                  <option key={code} value={code}>
-                    {CURRENCIES[code].label}
+                {CURRENCY_LIST.map((cfg) => (
+                  <option key={cfg.code} value={cfg.code}>
+                    {cfg.label}
                   </option>
                 ))}
               </select>

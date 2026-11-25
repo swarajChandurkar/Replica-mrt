@@ -9,7 +9,12 @@ import {
   WOMEN_SIZE_CHART,
 } from '../data/catalog';
 import type { AppPage, CartItem, CurrencyCode, CustomInquiry, OrderRecord } from '../types';
-import { calculateCorporateQuote, formatMoney } from '../utils/commerce';
+import {
+  BUILDER_BASE_PRICE_AED,
+  MADE_TO_MEASURE_SURCHARGE_AED,
+  calculateCorporateQuote,
+  formatMoney,
+} from '../utils/commerce';
 import { SafeImage } from './SafeImage';
 
 /* -------------------------------------------------------------------------- */
@@ -17,15 +22,20 @@ import { SafeImage } from './SafeImage';
 /* -------------------------------------------------------------------------- */
 
 interface CustomizePageProps {
+  currency: CurrencyCode;
   onNavigate: (page: AppPage) => void;
   onSubmitInquiry: (inquiry: Omit<CustomInquiry, 'id' | 'submittedAt'>) => CustomInquiry;
 }
 
-export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProps) {
+export function CustomizePage({ currency, onNavigate, onSubmitInquiry }: CustomizePageProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('+971 ');
-  const [budget, setBudget] = useState('2200');
+  const [company, setCompany] = useState('');
+  const [quantity, setQuantity] = useState('1');
+  const [country, setCountry] = useState('United Arab Emirates');
+  const [gender, setGender] = useState('Male');
+  const [budget, setBudget] = useState('1500');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState<CustomInquiry | null>(null);
@@ -41,32 +51,33 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
       fullName: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
-      company: '',
-      quantity: '1',
-      country: 'United Arab Emirates',
-      gender: 'Unisex',
+      company: company.trim(),
+      quantity,
+      country,
+      gender,
       budgetAED: budget,
       description: notes.trim(),
     });
     setSubmitted(record);
     setName('');
     setEmail('');
+    setCompany('');
     setNotes('');
   };
 
   return (
     <div>
       {/* Editorial Hero */}
-      <section className="bg-[#FAF9F7] border-b border-[#E5E5E3]">
+      <section className="bg-[#FAF9F7] dark:bg-[#13181B] border-b border-[#E5E5E3] dark:border-[#23292D]">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-14 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-5">
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676]">
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91]">
               White-Glove Bespoke Service
             </p>
-            <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] leading-tight">
+            <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight">
               Custom Leather Jackets, Tailored Without Compromise
             </h1>
-            <p className="text-sm sm:text-base text-[#595959] leading-relaxed">
+            <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
               Modify any jacket in our collection or bring a completely original concept to life.
               Our design consultants walk with you through hide selection, custom artwork,
               illustrations, and millimeter-accurate measurements.
@@ -75,23 +86,23 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
               <button
                 type="button"
                 onClick={() => onNavigate({ view: 'builder' })}
-                className="px-7 py-3.5 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+                className="px-7 py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
               >
                 Launch Interactive Builder
               </button>
               <a
                 href="#bespoke-consultation"
-                className="px-7 py-3.5 border border-[#1C1C1C] text-[#1C1C1C] hover:bg-white text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+                className="px-7 py-3.5 border border-[#1C1C1C] dark:border-[#F4F3EE] text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-white dark:hover:bg-[#1A2024] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
               >
                 Request Consultant Call
               </a>
             </div>
           </div>
 
-          <div className="lg:col-span-6 aspect-[4/3] bg-[#EFEFED] overflow-hidden">
+          <div className="lg:col-span-6 aspect-[4/3] bg-[#EFEFED] dark:bg-[#181E21] overflow-hidden">
             <SafeImage
               src={ASSETS.BESPOKE_CRAFT}
-              alt="Bespoke leather atelier workbench"
+              alt="Maison Valen bespoke leather atelier workbench"
               className="w-full h-full object-cover"
             />
           </div>
@@ -100,45 +111,52 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
 
       {/* Tier Comparison */}
       <section className="max-w-[1360px] mx-auto px-6 sm:px-10 py-16">
-        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] mb-8">
+        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-8">
           Three Ways to Tailor Your Piece
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              title: '01. Standard Ready-to-Wear',
-              price: 'Included',
-              desc: 'Choose from eight inclusive sizes (XS to 4XL) crafted on-demand from full-grain sheepskin, cowhide, or suede.',
+              title: '01. Ready-to-Ship Prime',
+              price: 'Next-Day Dispatch · 60-Day Exchange',
+              desc: "Choose from 8 standard sizes (Men's XS–4XL, Women's XXS–2XL) crafted from full-grain sheepskin, cowhide, or suede.",
               cta: 'Browse Catalog',
               action: () => onNavigate({ view: 'collection', filter: 'men' }),
             },
             {
               title: '02. Made-to-Measure Fit',
-              price: '+Dhs. 200 AED',
-              desc: 'Select any design from our store and supply your chest, waist, shoulder, and sleeve measurements for a sculpted bespoke fit.',
+              price: `+${formatMoney(MADE_TO_MEASURE_SURCHARGE_AED, currency)} · 3–4 Weeks`,
+              desc: 'Select any standard jacket and submit Chest, Height, Waist, Shoulders, Hips & Sleeves now or later by email (eligible for alterations).',
               cta: 'Shop Best Sellers',
               action: () => onNavigate({ view: 'collection', filter: 'sale' }),
             },
             {
-              title: '03. 100% Bespoke From Scratch',
-              price: 'From Dhs. 5,054 AED',
-              desc: 'Pick your exact hide, finish, color, hardware, lining, and inner monogram—complete with custom illustration and studio photo approval.',
+              title: '03. Full Digital Bespoke',
+              price: `From ${formatMoney(BUILDER_BASE_PRICE_AED, currency)} · 10–12 Weeks`,
+              desc: 'Configure hide, finish, Pantone shade, hardware, lining & embroidery—guided through our 7-step human-assisted atelier pipeline.',
               cta: 'Design Your Own',
               action: () => onNavigate({ view: 'builder' }),
             },
           ].map((tier) => (
-            <div key={tier.title} className="border border-[#E5E5E3] p-7 flex flex-col justify-between">
+            <div
+              key={tier.title}
+              className="border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-7 flex flex-col justify-between"
+            >
               <div>
-                <p className="text-xs font-semibold text-[#767676] mb-1">{tier.price}</p>
-                <h3 className="font-display text-2xl font-semibold text-[#1C1C1C] mb-3">
+                <p className="text-xs font-semibold text-[#767676] dark:text-[#8A8E91] mb-1">
+                  {tier.price}
+                </p>
+                <h3 className="font-display text-2xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-3">
                   {tier.title}
                 </h3>
-                <p className="text-sm text-[#595959] leading-relaxed mb-6">{tier.desc}</p>
+                <p className="text-sm text-[#595959] dark:text-[#A8ACAF] leading-relaxed mb-6">
+                  {tier.desc}
+                </p>
               </div>
               <button
                 type="button"
                 onClick={tier.action}
-                className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] hover:underline underline-offset-4"
+                className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE] hover:underline underline-offset-4"
               >
                 {tier.cta} <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
@@ -148,48 +166,62 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
       </section>
 
       {/* 7-Step Process */}
-      <section className="bg-[#FAF9F7] border-y border-[#E5E5E3] py-16">
+      <section className="bg-[#FAF9F7] dark:bg-[#13181B] border-y border-[#E5E5E3] dark:border-[#23292D] py-16">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-10">
-          <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] mb-10">
+          <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-10">
             Our Bespoke Atelier Process
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {BESPOKE_STEPS.map((s) => (
-              <div key={s.step} className="bg-white border border-[#E5E5E3] p-6">
-                <span className="font-display text-2xl font-semibold text-[#767676] tabular-nums">
+              <div
+                key={s.step}
+                className="bg-white dark:bg-[#14191C] border border-[#E5E5E3] dark:border-[#262D31] p-6"
+              >
+                <span className="font-display text-2xl font-semibold text-[#767676] dark:text-[#8A8E91] tabular-nums">
                   {s.step}
                 </span>
-                <h3 className="font-body text-sm font-semibold text-[#1C1C1C] mt-3 mb-2">
+                <h3 className="font-body text-sm font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mt-3 mb-2">
                   {s.title}
                 </h3>
-                <p className="text-xs text-[#595959] leading-relaxed">{s.description}</p>
+                <p className="text-xs text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
+                  {s.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Direct Consultation Form */}
-      <section id="bespoke-consultation" className="max-w-[820px] mx-auto px-6 py-16">
-        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] mb-2">
-          Start a Bespoke Consultation
+      {/* Direct B2B & Individual Bespoke Consultation Form (No MOQ) */}
+      <section id="bespoke-consultation" className="max-w-[860px] mx-auto px-6 py-16">
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
+          Individual, Team &amp; Corporate Commissions · No Minimum Order Quantity
+        </p>
+        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-2">
+          Start a Free Bespoke Consultation
         </h2>
-        <p className="text-sm text-[#595959] mb-7">
-          Tell our design team what you envision—whether modifying a lapel, matching a heritage
-          jacket, or commissioning custom team outerwear.
+        <p className="text-sm text-[#595959] dark:text-[#A8ACAF] mb-7">
+          Whether commissioning a single one-off piece or outfitting 50+ team members, select your
+          quantity tier, country, and gender below for a complimentary consultation and 2D mockup.
         </p>
 
         {submitted ? (
-          <div className="border border-[#1C1C1C] p-7 bg-[#FAF9F7] space-y-2">
-            <p className="font-semibold text-sm text-[#1C1C1C] flex items-center gap-2">
+          <div className="border border-[#1C1C1C] dark:border-[#F4F3EE] p-7 bg-[#FAF9F7] dark:bg-[#14191C] space-y-2">
+            <p className="font-semibold text-sm text-[#1C1C1C] dark:text-[#F4F3EE] flex items-center gap-2">
               <Check className="w-4 h-4" aria-hidden="true" /> Consultation Request Logged ({submitted.id})
             </p>
-            <p className="text-xs text-[#595959]">
-              A dedicated Jacket Maker consultant will reply to {submitted.email} within 24 hours.
+            <p className="text-xs text-[#595959] dark:text-[#A8ACAF]">
+              Quantity tier: <strong>{submitted.quantity}</strong> · Country:{' '}
+              <strong>{submitted.country}</strong> · Gender: <strong>{submitted.gender}</strong>. A
+              dedicated Maison Valen consultant will reply to {submitted.email} within 24 hours.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} noValidate className="space-y-4 border border-[#E5E5E3] p-6 sm:p-8">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="space-y-4 border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6 sm:p-8"
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cust-name" className="block text-xs font-medium mb-1">
@@ -200,7 +232,7 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
               </div>
               <div>
@@ -212,10 +244,11 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
               </div>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cust-phone" className="block text-xs font-medium mb-1">
@@ -226,8 +259,75 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
+              </div>
+              <div>
+                <label htmlFor="cust-company" className="block text-xs font-medium mb-1">
+                  Company / Team (Optional)
+                </label>
+                <input
+                  id="cust-company"
+                  type="text"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Optional for individual commissions"
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label htmlFor="cust-qty" className="block text-xs font-medium mb-1">
+                  Quantity Tier
+                </label>
+                <select
+                  id="cust-qty"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
+                >
+                  <option value="1">1</option>
+                  <option value="2-5">2–5</option>
+                  <option value="6-20">6–20</option>
+                  <option value="21-50">21–50</option>
+                  <option value="50+">50+</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="cust-country" className="block text-xs font-medium mb-1">
+                  Country
+                </label>
+                <select
+                  id="cust-country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
+                >
+                  <option value="United Arab Emirates">United Arab Emirates</option>
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Saudi Arabia">Saudi Arabia</option>
+                  <option value="Qatar">Qatar</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="cust-gender" className="block text-xs font-medium mb-1">
+                  Gender
+                </label>
+                <select
+                  id="cust-gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Unisex / Mixed">Unisex / Mixed</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="cust-budget" className="block text-xs font-medium mb-1">
@@ -238,10 +338,11 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
                   type="number"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm tabular-nums"
+                  className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE] tabular-nums"
                 />
               </div>
             </div>
+
             <div>
               <label htmlFor="cust-notes" className="block text-xs font-medium mb-1">
                 Design Vision &amp; Details*
@@ -251,17 +352,22 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
                 rows={4}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Share preferred silhouette, leather hide, shade, and custom details..."
-                className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                placeholder="Share preferred silhouette, leather hide, Pantone shade, logo zones, or team requirements..."
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               />
             </div>
-            {error && <p className="text-xs text-[#C41E24]">{error}</p>}
-            <button
-              type="submit"
-              className="px-8 py-3.5 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
-            >
-              Submit Consultation
-            </button>
+            {error && <p className="text-xs text-[#C41E24] dark:text-[#E8555A]">{error}</p>}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+              <p className="text-xs text-[#767676] dark:text-[#8A8E91]">
+                No Minimum Order Quantity · Free consultation with zero obligation.
+              </p>
+              <button
+                type="submit"
+                className="px-8 py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+              >
+                Start Free Consultation
+              </button>
+            </div>
           </form>
         )}
       </section>
@@ -270,7 +376,7 @@ export function CustomizePage({ onNavigate, onSubmitInquiry }: CustomizePageProp
 }
 
 /* -------------------------------------------------------------------------- */
-/* 2. BRAND / OUR STORY PAGE — Faithful to thejacketmaker.ae/pages/our-story  */
+/* 2. BRAND / OUR STORY PAGE — Maison Valen Heritage & Craftsmanship          */
 /* -------------------------------------------------------------------------- */
 
 export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => void }) {
@@ -306,18 +412,18 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
     <div>
       {/* Founder's Letter */}
       <section className="max-w-[960px] mx-auto px-6 sm:px-10 py-16 lg:py-20">
-        <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#767676] mb-3">
+        <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#767676] dark:text-[#8A8E91] mb-3">
           Our Story
         </p>
-        <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] leading-tight mb-8">
+        <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight mb-8">
           Born Between Overpriced Luxury &amp; Disposable Fast Fashion
         </h1>
 
-        <div className="space-y-5 text-base text-[#444444] leading-relaxed">
+        <div className="space-y-5 text-base text-[#444444] dark:text-[#B5B9BC] leading-relaxed">
           <p>
             Any wardrobe is simply incomplete without a great leather jacket. A search for a truly
-            well-made leather jacket is exactly where The Jacket Maker began, when a few friends and
-            I went looking for leather jackets ourselves.
+            well-made leather jacket is exactly where Maison Valen began, when our founding team
+            set out to commission honest, full-grain outerwear for ourselves.
           </p>
           <p>
             We were frustrated by the choice between fast-fashion pieces that peel after a season
@@ -331,47 +437,51 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
             UAE and 135+ countries, and operating on-demand atelier production, we deliver full-grain
             craftsmanship at honest, accessible pricing.
           </p>
-          <p className="font-display text-lg text-[#1C1C1C] font-semibold pt-2">
-            — Syed Obaid, CEO &amp; Co-Founder
+          <p className="font-display text-lg text-[#1C1C1C] dark:text-[#F4F3EE] font-semibold pt-2">
+            — Tariq Valen, Founder &amp; Creative Director
           </p>
         </div>
       </section>
 
-      {/* The Jacket Maker Difference */}
-      <section className="bg-[#FAF9F7] border-y border-[#E5E5E3] py-16 lg:py-20">
+      {/* The Maison Valen Difference */}
+      <section className="bg-[#FAF9F7] dark:bg-[#13181B] border-y border-[#E5E5E3] dark:border-[#23292D] py-16 lg:py-20">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-6">
-              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676]">
+              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91]">
                 Craft Philosophy
               </p>
-              <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C]">
-                The Jacket Maker Difference
+              <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+                The Maison Valen Difference
               </h2>
-              <div className="aspect-[4/3] bg-[#EFEFED] overflow-hidden">
+              <div className="aspect-[4/3] bg-[#EFEFED] dark:bg-[#181E21] overflow-hidden">
                 <SafeImage
                   src={ASSETS.BESPOKE_CRAFT}
-                  alt="Artisan hand-cutting full-grain leather hide"
+                  alt="Maison Valen artisan hand-cutting full-grain leather hide"
                   className="w-full h-full object-cover"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => onNavigate({ view: 'collection', filter: 'men' })}
-                className="px-7 py-3.5 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+                className="px-7 py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
               >
                 Explore The Collection
               </button>
             </div>
 
-            <div className="lg:col-span-7 divide-y divide-[#E5E5E3]">
+            <div className="lg:col-span-7 divide-y divide-[#E5E5E3] dark:divide-[#23292D]">
               {pillars.map((p) => (
                 <div key={p.num} className="py-7 first:pt-0">
-                  <span className="font-display text-sm text-[#767676] tabular-nums">{p.num}.</span>
-                  <h3 className="font-display text-2xl font-semibold text-[#1C1C1C] mt-1 mb-2">
+                  <span className="font-display text-sm text-[#767676] dark:text-[#8A8E91] tabular-nums">
+                    {p.num}.
+                  </span>
+                  <h3 className="font-display text-2xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mt-1 mb-2">
                     {p.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-[#595959] leading-relaxed">{p.body}</p>
+                  <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
+                    {p.body}
+                  </p>
                 </div>
               ))}
             </div>
@@ -381,31 +491,40 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
 
       {/* Press & Verified Reviews */}
       <section className="max-w-[1360px] mx-auto px-6 sm:px-10 py-16">
-        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] mb-8">
+        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-8">
           Press &amp; Verified Customer Praise
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {PRESS_QUOTES.slice(0, 3).map((q) => (
-            <div key={q.outlet} className="border border-[#E5E5E3] p-6">
-              <p className="font-display text-xs tracking-[0.18em] font-bold text-[#1C1C1C] mb-3">
+            <div key={q.outlet} className="border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6">
+              <p className="font-display text-xs tracking-[0.18em] font-bold text-[#1C1C1C] dark:text-[#F4F3EE] mb-3">
                 {q.outlet}
               </p>
-              <p className="font-display italic text-lg text-[#333333] leading-snug">{q.quote}</p>
+              <p className="font-display italic text-lg text-[#333333] dark:text-[#D5D7D8] leading-snug">
+                {q.quote}
+              </p>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {CUSTOMER_REVIEWS.map((r) => (
-            <div key={r.id} className="bg-[#FAF9F7] border border-[#E5E5E3] p-6">
+            <div
+              key={r.id}
+              className="bg-[#FAF9F7] dark:bg-[#14191C] border border-[#E5E5E3] dark:border-[#262D31] p-6"
+            >
               <div className="flex items-center gap-1 mb-2">
                 {[0, 1, 2, 3, 4].map((s) => (
-                  <Star key={s} className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C]" aria-hidden="true" />
+                  <Star
+                    key={s}
+                    className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C] dark:fill-[#D9AD4E] dark:text-[#D9AD4E]"
+                    aria-hidden="true"
+                  />
                 ))}
               </div>
-              <p className="text-sm font-semibold text-[#1C1C1C] mb-1.5">{r.title}</p>
-              <p className="text-xs text-[#595959] leading-relaxed mb-4">“{r.body}”</p>
-              <p className="text-[11px] text-[#767676]">
+              <p className="text-sm font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-1.5">{r.title}</p>
+              <p className="text-xs text-[#595959] dark:text-[#A8ACAF] leading-relaxed mb-4">“{r.body}”</p>
+              <p className="text-[11px] text-[#767676] dark:text-[#8A8E91]">
                 {r.author} · {r.location}
               </p>
             </div>
@@ -470,19 +589,19 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
     <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-12 lg:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         <div className="lg:col-span-6 space-y-6">
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676]">
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91]">
             UAE &amp; Global Corporate Gifting
           </p>
-          <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] leading-tight">
+          <h1 className="font-display text-4xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight">
             Executive Leather Gifts That Leave a Lasting Impression
           </h1>
-          <p className="text-sm sm:text-base text-[#595959] leading-relaxed">
+          <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
             Partner with our bespoke atelier for executive jackets, embossed full-grain weekender
             bags, and milestone gifts. Trusted by motorsport teams, hospitality groups, and
             leadership retreats across Dubai, Abu Dhabi, and globally.
           </p>
 
-          <div className="aspect-[4/3] bg-[#F1F1EF] overflow-hidden">
+          <div className="aspect-[4/3] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden">
             <SafeImage
               src={ASSETS.LEATHER_WEEKENDER}
               alt="Handcrafted full-grain leather weekender corporate gift"
@@ -492,26 +611,26 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
         </div>
 
         {/* Live Corporate Volume Quote Estimator & Proposal Form */}
-        <div className="lg:col-span-6 border border-[#E5E5E3] bg-[#FAF9F7] p-6 sm:p-9 space-y-6">
+        <div className="lg:col-span-6 border border-[#E5E5E3] dark:border-[#262D31] bg-[#FAF9F7] dark:bg-[#14191C] p-6 sm:p-9 space-y-6">
           <div>
-            <p className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] mb-1">
+            <p className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE] mb-1">
               Instant Volume Estimate
             </p>
-            <p className="text-xs text-[#595959]">
+            <p className="text-xs text-[#595959] dark:text-[#A8ACAF]">
               Tiered pricing unlocks automatically at 10, 25, 50, and 100+ units.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="corp-tier" className="block text-xs font-medium text-[#1C1C1C] mb-1.5">
+              <label htmlFor="corp-tier" className="block text-xs font-medium text-[#1C1C1C] dark:text-[#F4F3EE] mb-1.5">
                 Gift Piece
               </label>
               <select
                 id="corp-tier"
                 value={tier}
                 onChange={(e) => setTier(e.target.value as typeof tier)}
-                className="w-full bg-white border border-[#D4D4D0] px-3 py-2.5 text-sm"
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               >
                 <option value="leather-jacket">Full-Grain Leather Jackets</option>
                 <option value="suede-bomber">Suede Bomber Jackets</option>
@@ -520,66 +639,66 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
               </select>
             </div>
             <div>
-              <label htmlFor="corp-qty" className="block text-xs font-medium text-[#1C1C1C] mb-1.5">
-                Quantity (Min 10)
+              <label htmlFor="corp-qty" className="block text-xs font-medium text-[#1C1C1C] dark:text-[#F4F3EE] mb-1.5">
+                Quantity (No MOQ · 1–1000)
               </label>
               <input
                 id="corp-qty"
                 type="number"
-                min={10}
+                min={1}
                 max={1000}
                 value={qty}
-                onChange={(e) => setQty(Math.max(10, Number(e.target.value) || 10))}
-                className="w-full bg-white border border-[#D4D4D0] px-3 py-2.5 text-sm tabular-nums"
+                onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE] tabular-nums"
               />
             </div>
           </div>
 
-          <label className="flex items-center gap-2.5 text-xs text-[#1C1C1C] cursor-pointer">
+          <label className="flex items-center gap-2.5 text-xs text-[#1C1C1C] dark:text-[#E5E4DE] cursor-pointer">
             <input
               type="checkbox"
               checked={embossing}
               onChange={(e) => setEmbossing(e.target.checked)}
-              className="accent-[#1C1C1C]"
+              className="accent-[#1C1C1C] dark:accent-[#F4F3EE]"
             />
             Include blind-debossed company logo &amp; custom presentation dust bags (+Dhs. 85 / unit)
           </label>
 
           {/* Estimate Summary */}
-          <div className="bg-white border border-[#E5E5E3] p-5 space-y-2 text-xs tabular-nums">
-            <div className="flex justify-between text-[#595959]">
+          <div className="bg-white dark:bg-[#0E1214] border border-[#E5E5E3] dark:border-[#262D31] p-5 space-y-2 text-xs tabular-nums">
+            <div className="flex justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Volume Discount Applied</span>
-              <span className="font-semibold text-[#C41E24]">{quote.discountPercent}% OFF</span>
+              <span className="font-semibold text-[#C41E24] dark:text-[#E8555A]">{quote.discountPercent}% OFF</span>
             </div>
-            <div className="flex justify-between text-[#595959]">
+            <div className="flex justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Estimated Unit Price</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {formatMoney(quote.unitFinalAED, currency)}
               </span>
             </div>
-            <div className="flex justify-between text-[#595959]">
+            <div className="flex justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Total Volume Savings</span>
-              <span className="font-medium text-[#1C1C1C]">
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {formatMoney(quote.totalSavingsAED, currency)}
               </span>
             </div>
-            <div className="pt-3 mt-2 border-t border-[#EFEFED] flex items-baseline justify-between">
-              <span className="font-semibold uppercase tracking-[0.12em] text-[#1C1C1C]">
+            <div className="pt-3 mt-2 border-t border-[#EFEFED] dark:border-[#23292D] flex items-baseline justify-between">
+              <span className="font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] dark:text-[#F4F3EE]">
                 Estimated Order Total
               </span>
-              <span className="font-display text-2xl font-semibold text-[#1C1C1C]">
+              <span className="font-display text-2xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {formatMoney(quote.totalAED, currency)}
               </span>
             </div>
           </div>
 
           {submitted ? (
-            <div className="bg-white border border-[#1C1C1C] p-5 text-xs space-y-1.5">
-              <p className="font-semibold text-[#1C1C1C] flex items-center gap-1.5">
+            <div className="bg-white dark:bg-[#0E1214] border border-[#1C1C1C] dark:border-[#F4F3EE] p-5 text-xs space-y-1.5">
+              <p className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] flex items-center gap-1.5">
                 <Check className="w-4 h-4" aria-hidden="true" /> Corporate Proposal Request Logged (
                 {submitted.id})
               </p>
-              <p className="text-[#595959]">
+              <p className="text-[#595959] dark:text-[#A8ACAF]">
                 Our Dubai corporate concierge will send leather swatches and formal quotation to{' '}
                 {submitted.email}.
               </p>
@@ -593,7 +712,7 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="Company / Organization*"
                   aria-label="Company or Organization"
-                  className="bg-white border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                  className="bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
                 <input
                   type="text"
@@ -601,7 +720,7 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
                   onChange={(e) => setContactName(e.target.value)}
                   placeholder="Your Name*"
                   aria-label="Your Name"
-                  className="bg-white border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                  className="bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
                 />
               </div>
               <input
@@ -610,12 +729,12 @@ export function CorporateGiftsPage({ currency, onSubmitInquiry }: CorporateGifts
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Work Email*"
                 aria-label="Work Email"
-                className="w-full bg-white border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               />
-              {error && <p className="text-xs text-[#C41E24]">{error}</p>}
+              {error && <p className="text-xs text-[#C41E24] dark:text-[#E8555A]">{error}</p>}
               <button
                 type="submit"
-                className="w-full py-3.5 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
+                className="w-full py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase transition-colors"
               >
                 Request Corporate Proposal &amp; Swatch Kit
               </button>
@@ -652,7 +771,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
     onAddToCart({
       productId: `gift-card-${amountAED}-${format}`,
       slug: 'gift-cards',
-      name: `The Jacket Maker Gift Card (${format})`,
+      name: `Maison Valen Gift Card (${format})`,
       image: ASSETS.LEATHER_WEEKENDER,
       unitPriceAED: amountAED,
       quantity: 1,
@@ -671,20 +790,20 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         {/* Live Luxury Gift Card Preview */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="aspect-[16/10] bg-[#161616] text-white p-8 sm:p-10 flex flex-col justify-between border border-black relative overflow-hidden">
+          <div className="aspect-[16/10] bg-[#14171A] text-white p-8 sm:p-10 flex flex-col justify-between border border-[#262D31] relative overflow-hidden">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-display text-[10px] tracking-[0.26em] uppercase text-white/70">
-                  THE
+                <p className="font-display text-[10px] tracking-[0.34em] uppercase text-white/70">
+                  MAISON
                 </p>
-                <p className="font-display text-2xl font-bold tracking-[0.06em] uppercase leading-none">
-                  JACKET MAKER
+                <p className="font-display text-3xl font-bold tracking-[0.14em] uppercase leading-none mt-0.5">
+                  VALEN
                 </p>
                 <p className="text-[11px] tracking-[0.16em] uppercase text-white/60 mt-2">
                   UAE Atelier · {format}
                 </p>
               </div>
-              <Gift className="w-6 h-6 text-[#C89B3C]" aria-hidden="true" />
+              <Gift className="w-6 h-6 text-[#D9AD4E]" aria-hidden="true" />
             </div>
 
             <div>
@@ -700,7 +819,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
             </div>
           </div>
 
-          <p className="text-sm text-[#595959] leading-relaxed">
+          <p className="text-sm text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
             Unsure of their exact leather shade or size? Give the unmistakable experience of
             commissioning a handcrafted jacket or bespoke Made-to-Measure piece—valid online across
             the UAE and worldwide with zero expiration date.
@@ -710,16 +829,16 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
         {/* Gift Card Configurator */}
         <form onSubmit={handleAddGiftCard} className="lg:col-span-6 space-y-6">
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] mb-2">
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
               Gifting Concierge
             </p>
-            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C]">
-              The Jacket Maker Gift Card
+            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+              Maison Valen Gift Card
             </h1>
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] mb-2.5">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] dark:text-[#F4F3EE] mb-2.5">
               Select Presentation
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -730,8 +849,8 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
                   onClick={() => setFormat(opt)}
                   className={`py-3 px-4 border text-xs font-semibold transition-colors ${
                     format === opt
-                      ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                      : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                      ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                      : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                   }`}
                 >
                   {opt}
@@ -741,7 +860,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] mb-2.5">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] dark:text-[#F4F3EE] mb-2.5">
               Select Value
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
@@ -752,8 +871,8 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
                   onClick={() => setAmountAED(val)}
                   className={`py-2.5 border text-xs font-semibold tabular-nums transition-colors ${
                     amountAED === val
-                      ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                      : 'bg-white text-[#1C1C1C] border-[#D8D8D5] hover:border-[#1C1C1C]'
+                      ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                      : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                   }`}
                 >
                   {val.toLocaleString()} AED
@@ -769,7 +888,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
               onChange={(e) => setRecipientName(e.target.value)}
               placeholder="Recipient Name (Optional)"
               aria-label="Recipient Name"
-              className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+              className="w-full bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
             />
             <input
               type="email"
@@ -777,7 +896,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
               onChange={(e) => setRecipientEmail(e.target.value)}
               placeholder="Recipient Email (Optional)"
               aria-label="Recipient Email"
-              className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+              className="w-full bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
             />
             <textarea
               rows={3}
@@ -785,13 +904,13 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Add a personal gift note..."
               aria-label="Personal gift note"
-              className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+              className="w-full bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-4 bg-[#1C1C1C] hover:bg-black text-white text-xs font-semibold tracking-[0.16em] uppercase transition-colors"
+            className="w-full py-4 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.16em] uppercase transition-colors"
           >
             Add Gift Card to Cart · {formatMoney(amountAED, currency)}
           </button>
@@ -817,7 +936,7 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
   );
   const [unit, setUnit] = useState<'cm' | 'in'>('cm');
   const [sizeGender, setSizeGender] = useState<'men' | 'women'>('men');
-  const [trackInput, setTrackInput] = useState('TJM-AE-84920');
+  const [trackInput, setTrackInput] = useState('MV-AE-84920');
   const [trackedOrder, setTrackedOrder] = useState<OrderRecord | 'not-found' | null>(null);
   const [contactSent, setContactSent] = useState(false);
 
@@ -829,9 +948,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
       setTrackedOrder(found);
       return;
     }
-    if (cleaned === 'TJM-AE-84920') {
+    if (cleaned === 'MV-AE-84920') {
       setTrackedOrder({
-        orderNumber: 'TJM-AE-84920',
+        orderNumber: 'MV-AE-84920',
         placedAt: 'November 21, 2026',
         status: 'Quality Inspection',
         paymentMethod: 'Card',
@@ -856,16 +975,16 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
   return (
     <div className="max-w-[1200px] mx-auto px-6 sm:px-10 py-12 lg:py-16">
       <div className="mb-10">
-        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] mb-2">
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
           Customer Care Concierge
         </p>
-        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C]">
+        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
           Help Center &amp; Policies
         </h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-[#E5E5E3] pb-4 mb-10" role="tablist">
+      <div className="flex flex-wrap gap-2 border-b border-[#E5E5E3] dark:border-[#23292D] pb-4 mb-10" role="tablist">
         {(
           [
             { id: 'track', label: 'Track Order' },
@@ -883,8 +1002,8 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
             onClick={() => setTab(t.id)}
             className={`px-4 py-2 text-xs font-semibold tracking-[0.1em] uppercase transition-colors ${
               tab === t.id
-                ? 'bg-[#1C1C1C] text-white'
-                : 'bg-[#FAF9F7] text-[#595959] hover:text-[#1C1C1C]'
+                ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214]'
+                : 'bg-[#FAF9F7] dark:bg-[#14191C] text-[#595959] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
             }`}
           >
             {t.label}
@@ -894,9 +1013,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
 
       {tab === 'track' && (
         <div className="max-w-2xl space-y-6">
-          <p className="text-sm text-[#595959]">
-            Enter your Jacket Maker order number (try demo order{' '}
-            <strong className="text-[#1C1C1C]">TJM-AE-84920</strong> or any order placed during this
+          <p className="text-sm text-[#595959] dark:text-[#A8ACAF]">
+            Enter your Maison Valen order number (try demo order{' '}
+            <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">MV-AE-84920</strong> or any order placed during this
             session).
           </p>
           <form onSubmit={handleTrack} className="flex gap-2">
@@ -908,59 +1027,66 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
               type="text"
               value={trackInput}
               onChange={(e) => setTrackInput(e.target.value)}
-              placeholder="e.g. TJM-AE-84920"
-              className="flex-1 border border-[#D4D4D0] px-4 py-3 text-sm"
+              placeholder="e.g. MV-AE-84920"
+              className="flex-1 bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-4 py-3 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-[#1C1C1C] text-white text-xs font-semibold tracking-[0.14em] uppercase inline-flex items-center gap-2"
+              className="px-6 py-3 bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.14em] uppercase inline-flex items-center gap-2"
             >
               <Search className="w-3.5 h-3.5" aria-hidden="true" /> Track
             </button>
           </form>
 
           {trackedOrder === 'not-found' && (
-            <p className="text-sm text-[#C41E24]">
-              No order matched that ID. Try <strong>TJM-AE-84920</strong> or check your Order
+            <p className="text-sm text-[#C41E24] dark:text-[#E8555A]">
+              No order matched that ID. Try <strong>MV-AE-84920</strong> or check your Order
               History under Account.
             </p>
           )}
 
           {trackedOrder && trackedOrder !== 'not-found' && (
-            <div className="border border-[#E5E5E3] bg-[#FAF9F7] p-6 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[#E5E5E3]">
+            <div className="border border-[#E5E5E3] dark:border-[#262D31] bg-[#FAF9F7] dark:bg-[#14191C] p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[#E5E5E3] dark:border-[#262D31]">
                 <div>
-                  <p className="text-xs text-[#767676]">Order Reference</p>
-                  <p className="font-display text-xl font-semibold text-[#1C1C1C] tabular-nums">
+                  <p className="text-xs text-[#767676] dark:text-[#8A8E91]">Order Reference</p>
+                  <p className="font-display text-xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] tabular-nums">
                     #{trackedOrder.orderNumber}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-[#767676]">Current Stage</p>
-                  <p className="text-sm font-semibold text-[#1C1C1C]">{trackedOrder.status}</p>
+                  <p className="text-xs text-[#767676] dark:text-[#8A8E91]">Current Stage</p>
+                  <p className="text-sm font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+                    {trackedOrder.status}
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                 <div>
-                  <p className="text-[#767676]">Recipient</p>
-                  <p className="font-medium text-[#1C1C1C] mt-0.5">{trackedOrder.customerName}</p>
+                  <p className="text-[#767676] dark:text-[#8A8E91]">Recipient</p>
+                  <p className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] mt-0.5">
+                    {trackedOrder.customerName}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#767676]">Destination</p>
-                  <p className="font-medium text-[#1C1C1C] mt-0.5">
+                  <p className="text-[#767676] dark:text-[#8A8E91]">Destination</p>
+                  <p className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] mt-0.5">
                     {trackedOrder.city}, {trackedOrder.country}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[#767676]">Estimated Delivery</p>
-                  <p className="font-medium text-[#1C1C1C] mt-0.5">
+                  <p className="text-[#767676] dark:text-[#8A8E91]">Estimated Delivery</p>
+                  <p className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] mt-0.5">
                     {trackedOrder.estimatedDelivery}
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-[#595959] tabular-nums">
-                Total Paid: <strong className="text-[#1C1C1C]">{formatMoney(trackedOrder.totalAED, currency)}</strong> ·
-                All UAE duties &amp; VAT prepaid.
+              <p className="text-xs text-[#595959] dark:text-[#A8ACAF] tabular-nums">
+                Total Paid:{' '}
+                <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">
+                  {formatMoney(trackedOrder.totalAED, currency)}
+                </strong>{' '}
+                · All UAE duties &amp; VAT prepaid.
               </p>
             </div>
           )}
@@ -970,12 +1096,14 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
       {tab === 'size-guide' && (
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex border border-[#D8D8D5]">
+            <div className="inline-flex border border-[#D8D8D5] dark:border-[#2B3237]">
               <button
                 type="button"
                 onClick={() => setSizeGender('men')}
                 className={`px-4 py-2 text-xs font-semibold ${
-                  sizeGender === 'men' ? 'bg-[#1C1C1C] text-white' : 'bg-white text-[#595959]'
+                  sizeGender === 'men'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214]'
+                    : 'bg-white dark:bg-[#14191C] text-[#595959] dark:text-[#A8ACAF]'
                 }`}
               >
                 Men&apos;s Outerwear
@@ -984,7 +1112,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
                 type="button"
                 onClick={() => setSizeGender('women')}
                 className={`px-4 py-2 text-xs font-semibold ${
-                  sizeGender === 'women' ? 'bg-[#1C1C1C] text-white' : 'bg-white text-[#595959]'
+                  sizeGender === 'women'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214]'
+                    : 'bg-white dark:bg-[#14191C] text-[#595959] dark:text-[#A8ACAF]'
                 }`}
               >
                 Women&apos;s Outerwear
@@ -992,12 +1122,14 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
             </div>
 
             <div className="inline-flex items-center gap-2 text-xs">
-              <Ruler className="w-4 h-4 text-[#595959]" aria-hidden="true" />
+              <Ruler className="w-4 h-4 text-[#595959] dark:text-[#A8ACAF]" aria-hidden="true" />
               <button
                 type="button"
                 onClick={() => setUnit('cm')}
                 className={`px-3 py-1.5 border ${
-                  unit === 'cm' ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]' : 'border-[#D8D8D5]'
+                  unit === 'cm'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                    : 'border-[#D8D8D5] dark:border-[#2B3237] text-[#1C1C1C] dark:text-[#F4F3EE]'
                 }`}
               >
                 Centimeters (cm)
@@ -1006,7 +1138,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
                 type="button"
                 onClick={() => setUnit('in')}
                 className={`px-3 py-1.5 border ${
-                  unit === 'in' ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]' : 'border-[#D8D8D5]'
+                  unit === 'in'
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
+                    : 'border-[#D8D8D5] dark:border-[#2B3237] text-[#1C1C1C] dark:text-[#F4F3EE]'
                 }`}
               >
                 Inches (in)
@@ -1014,9 +1148,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
             </div>
           </div>
 
-          <div className="overflow-x-auto border border-[#E5E5E3]">
+          <div className="overflow-x-auto border border-[#E5E5E3] dark:border-[#262D31]">
             <table className="w-full text-left text-xs tabular-nums">
-              <thead className="bg-[#FAF9F7] border-b border-[#E5E5E3] text-[#1C1C1C] uppercase tracking-wider">
+              <thead className="bg-[#FAF9F7] dark:bg-[#14191C] border-b border-[#E5E5E3] dark:border-[#262D31] text-[#1C1C1C] dark:text-[#F4F3EE] uppercase tracking-wider">
                 <tr>
                   <th className="py-3.5 px-4">Size</th>
                   <th className="py-3.5 px-4">EU Equivalent</th>
@@ -1025,18 +1159,18 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
                   <th className="py-3.5 px-4">Sleeve ({unit})</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EFEFED]">
+              <tbody className="divide-y divide-[#EFEFED] dark:divide-[#23292D]">
                 {chartRows.map((row) => (
-                  <tr key={row.size} className="hover:bg-[#FAF9F7]">
-                    <td className="py-3 px-4 font-semibold text-[#1C1C1C]">{row.size}</td>
-                    <td className="py-3 px-4 text-[#595959]">EU {row.eu}</td>
-                    <td className="py-3 px-4 text-[#1C1C1C]">
+                  <tr key={row.size} className="hover:bg-[#FAF9F7] dark:hover:bg-[#14191C]">
+                    <td className="py-3 px-4 font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">{row.size}</td>
+                    <td className="py-3 px-4 text-[#595959] dark:text-[#A8ACAF]">EU {row.eu}</td>
+                    <td className="py-3 px-4 text-[#1C1C1C] dark:text-[#F4F3EE]">
                       {unit === 'cm' ? row.chestCm : row.chestIn}
                     </td>
-                    <td className="py-3 px-4 text-[#1C1C1C]">
+                    <td className="py-3 px-4 text-[#1C1C1C] dark:text-[#F4F3EE]">
                       {unit === 'cm' ? row.waistCm : row.waistIn}
                     </td>
-                    <td className="py-3 px-4 text-[#1C1C1C]">
+                    <td className="py-3 px-4 text-[#1C1C1C] dark:text-[#F4F3EE]">
                       {unit === 'cm' ? row.sleeveCm : row.sleeveIn}
                     </td>
                   </tr>
@@ -1066,18 +1200,23 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
               body: 'Every jacket ships in a reinforced protective mailer with a breathable cotton storage bag to preserve full-grain leather drape.',
             },
           ].map((item) => (
-            <div key={item.title} className="border border-[#E5E5E3] p-6 space-y-3">
-              <item.icon className="w-5 h-5 text-[#1C1C1C]" aria-hidden="true" />
-              <h2 className="font-display text-xl font-semibold text-[#1C1C1C]">{item.title}</h2>
-              <p className="text-sm text-[#595959] leading-relaxed">{item.body}</p>
+            <div
+              key={item.title}
+              className="border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6 space-y-3"
+            >
+              <item.icon className="w-5 h-5 text-[#1C1C1C] dark:text-[#F4F3EE]" aria-hidden="true" />
+              <h2 className="font-display text-xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+                {item.title}
+              </h2>
+              <p className="text-sm text-[#595959] dark:text-[#A8ACAF] leading-relaxed">{item.body}</p>
             </div>
           ))}
         </div>
       )}
 
       {tab === 'returns' && (
-        <div className="max-w-2xl space-y-4 text-sm text-[#595959] leading-relaxed">
-          <h2 className="font-display text-2xl font-semibold text-[#1C1C1C]">
+        <div className="max-w-2xl space-y-4 text-sm text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
+          <h2 className="font-display text-2xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
             60-Day Exchange &amp; Hassle-Free Returns
           </h2>
           <p>
@@ -1094,9 +1233,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
       {tab === 'contact' && (
         <div className="max-w-xl">
           {contactSent ? (
-            <div className="border border-[#1C1C1C] p-6 bg-[#FAF9F7] text-sm">
-              <p className="font-semibold text-[#1C1C1C] mb-1">Message Received</p>
-              <p className="text-[#595959]">
+            <div className="border border-[#1C1C1C] dark:border-[#F4F3EE] p-6 bg-[#FAF9F7] dark:bg-[#14191C] text-sm">
+              <p className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-1">Message Received</p>
+              <p className="text-[#595959] dark:text-[#A8ACAF]">
                 Our UAE concierge team will respond within one business day.
               </p>
             </div>
@@ -1106,32 +1245,32 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
                 e.preventDefault();
                 setContactSent(true);
               }}
-              className="space-y-4 border border-[#E5E5E3] p-6"
+              className="space-y-4 border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6"
             >
               <input
                 type="text"
                 required
                 placeholder="Your Name*"
                 aria-label="Your Name"
-                className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               />
               <input
                 type="email"
                 required
                 placeholder="Email Address*"
                 aria-label="Email Address"
-                className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               />
               <textarea
                 rows={4}
                 required
                 placeholder="How can our concierge help?"
                 aria-label="Message"
-                className="w-full border border-[#D4D4D0] px-3.5 py-2.5 text-sm"
+                className="w-full bg-white dark:bg-[#0E1214] border border-[#D4D4D0] dark:border-[#2B3237] px-3.5 py-2.5 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
               />
               <button
                 type="submit"
-                className="px-7 py-3 bg-[#1C1C1C] text-white text-xs font-semibold tracking-[0.15em] uppercase"
+                className="px-7 py-3 bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.15em] uppercase"
               >
                 Send Message
               </button>

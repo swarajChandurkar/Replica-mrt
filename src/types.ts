@@ -1,4 +1,4 @@
-export type CurrencyCode = 'AED' | 'USD' | 'GBP' | 'EUR' | 'SAR';
+export type CurrencyCode = string;
 
 export interface CurrencyConfig {
   code: CurrencyCode;
@@ -21,6 +21,18 @@ export type ProductCategory =
   | 'shoes'
   | 'gift-cards';
 
+export type WorkflowTrack =
+  | 'Ready-to-Ship Prime'
+  | 'Made-to-Measure (3–4 Weeks)'
+  | 'Digital Bespoke (10–12 Weeks)';
+
+export type PaymentMethod =
+  | 'Card'
+  | 'Shop Pay'
+  | 'PayPal'
+  | 'Amazon Pay'
+  | 'Cash on Delivery (UAE)';
+
 export interface ProductColorOption {
   name: string;
   hex: string;
@@ -35,6 +47,23 @@ export interface ProductReview {
   title: string;
   body: string;
   verifiedFit: 'Standard Fit' | 'Made to Measure' | 'Bespoke Custom';
+}
+
+export interface CommunityVideo {
+  id: string;
+  creatorHandle: string;
+  creatorRole: string;
+  location: string;
+  title: string;
+  duration: string;
+  views: string;
+  productSlug: string;
+  productName: string;
+  priceAED: number;
+  posterImage: string;
+  secondaryFrameImage: string;
+  quote: string;
+  fitNote: string;
 }
 
 export interface Product {
@@ -68,9 +97,11 @@ export interface Product {
 export interface CustomMeasurements {
   chestCm: string;
   waistCm: string;
+  hipsCm: string;
   shoulderCm: string;
   sleeveCm: string;
   heightCm: string;
+  submitLaterByEmail?: boolean;
 }
 
 export interface CartItem {
@@ -85,6 +116,7 @@ export interface CartItem {
   color: string;
   size: string;
   isMadeToMeasure?: boolean;
+  workflowTrack?: WorkflowTrack;
   measurements?: CustomMeasurements;
   customSummary?: string[];
 }
@@ -100,7 +132,9 @@ export interface BuilderConfig {
   leatherType: 'sheepskin' | 'goatskin' | 'cowhide' | 'calf-hide';
   leatherFinish: 'semi-aniline' | 'aniline' | 'burnished' | 'nubuck' | 'suede' | 'textured';
   shade: string;
-  hardware: 'Silver' | 'Antique Brass' | 'Gunmetal' | 'Brushed Gold';
+  isCustomPantone: boolean;
+  pantoneCode: string;
+  hardware: 'Silver' | 'Antique Brass' | 'Gunmetal' | 'Matte Black' | 'Brushed Gold';
   lining: 'quilted-polyester' | 'plain-polyester' | 'cotton' | 'faux-fur' | 'custom-printed';
   exteriorEmbroidery: 'none' | 'left-chest' | 'right-chest' | 'left-arm' | 'right-arm' | 'back';
   innerPersonalization: 'none' | 'initials' | 'phrase';
@@ -113,7 +147,8 @@ export interface OrderRecord {
   orderNumber: string;
   placedAt: string;
   status: 'Confirmed' | 'In Atelier Production' | 'Quality Inspection' | 'Dispatched' | 'Delivered';
-  paymentMethod: 'Card' | 'Cash on Delivery (UAE)';
+  paymentMethod: PaymentMethod;
+  workflowTrack?: WorkflowTrack;
   customerName: string;
   email: string;
   phone: string;

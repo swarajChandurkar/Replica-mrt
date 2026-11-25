@@ -1,6 +1,13 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Check, Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2, X } from 'lucide-react';
-import type { AppPage, CartItem, CurrencyCode, OrderRecord } from '../types';
+import type {
+  AppPage,
+  CartItem,
+  CurrencyCode,
+  OrderRecord,
+  PaymentMethod,
+  WorkflowTrack,
+} from '../types';
 import { calculateCartSummary, formatMoney, validatePromoCode } from '../utils/commerce';
 import { SafeImage } from './SafeImage';
 
@@ -13,7 +20,7 @@ interface CartDrawerProps {
   onUpdateQty: (lineId: string, delta: number) => void;
   onRemoveItem: (lineId: string) => void;
   onClose: () => void;
-  onProceedToCheckout: () => void;
+  onProceedToCheckout: (preferredPayment?: PaymentMethod) => void;
   onNavigate: (page: AppPage) => void;
 }
 
@@ -76,9 +83,9 @@ export function CartDrawer({
           </button>
         </div>
 
-        {/* Free Shipping Assurance Bar */}
+        {/* Free Shipping & Delivered Duty Paid (DDP) Bar */}
         <div className="bg-[#1C1C1C] dark:bg-[#090C0E] text-white px-6 py-2.5 text-[11.5px] tracking-wide text-center border-b border-transparent dark:border-[#23292D]">
-          Free Express UAE Shipping · All Customs Duties &amp; Taxes Included
+          Delivered Duty Paid (DDP) Guaranteed · Free Express Worldwide Shipping
         </div>
 
         {/* Cart Body */}
@@ -132,9 +139,14 @@ export function CartDrawer({
                     <p className="text-xs text-[#595959] dark:text-[#A8ACAF] mt-0.5">
                       {item.color} · {item.size}
                     </p>
+                    {item.workflowTrack && (
+                      <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#767676] dark:text-[#9FA5A9] mt-1">
+                        {item.workflowTrack}
+                      </p>
+                    )}
                     {item.customSummary && item.customSummary.length > 0 && (
                       <ul className="mt-1.5 space-y-0.5 text-[11px] text-[#767676] dark:text-[#8A8E91]">
-                        {item.customSummary.slice(0, 3).map((line) => (
+                        {item.customSummary.slice(0, 4).map((line) => (
                           <li key={line}>{line}</li>
                         ))}
                       </ul>
@@ -243,17 +255,50 @@ export function CartDrawer({
 
               <button
                 type="button"
-                onClick={onProceedToCheckout}
+                onClick={() => onProceedToCheckout('Card')}
                 className="w-full py-3.5 bg-[#1C1C1C] dark:bg-[#F4F3EE] hover:bg-black dark:hover:bg-white text-white dark:text-[#0E1214] text-xs font-semibold tracking-[0.16em] uppercase transition-colors"
               >
                 Proceed to Checkout
               </button>
 
+              {/* Express Wallets: Shop Pay, PayPal, Amazon Pay */}
+              <div className="space-y-2">
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#767676] dark:text-[#8A8E91] text-center">
+                  Or Express Checkout
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onProceedToCheckout('Shop Pay')}
+                    aria-label="Express checkout with Shop Pay"
+                    className="py-2.5 px-2 bg-[#5A31F4] hover:bg-[#4922DB] text-white text-xs font-bold tracking-tight transition-colors"
+                  >
+                    Shop Pay
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onProceedToCheckout('PayPal')}
+                    aria-label="Express checkout with PayPal"
+                    className="py-2.5 px-2 bg-[#FFC439] hover:bg-[#F2B629] text-[#003087] text-xs font-bold tracking-tight transition-colors"
+                  >
+                    PayPal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onProceedToCheckout('Amazon Pay')}
+                    aria-label="Express checkout with Amazon Pay"
+                    className="py-2.5 px-2 bg-[#232F3E] hover:bg-[#19232E] text-[#FF9900] text-xs font-bold tracking-tight transition-colors"
+                  >
+                    Amazon Pay
+                  </button>
+                </div>
+              </div>
+
               <p className="text-[11px] text-[#767676] dark:text-[#8A8E91] leading-relaxed flex items-start gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#1C1C1C] dark:text-[#F4F3EE]" aria-hidden="true" />
                 <span>
-                  Your total payment covers all customs duties and taxes. You won&apos;t encounter
-                  any extra charges upon delivery, guaranteed.
+                  <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">Delivered Duty Paid (DDP):</strong>{' '}
+                  Your total includes all customs duties and taxes with zero extra fees on delivery.
                 </span>
               </p>
             </div>
@@ -273,6 +318,7 @@ interface CheckoutModalProps {
   items: CartItem[];
   currency: CurrencyCode;
   promoCode: string;
+  initialPaymentMethod?: PaymentMethod;
   onClose: () => void;
   onCompleteOrder: (order: OrderRecord) => void;
 }
@@ -282,6 +328,7 @@ export function CheckoutModal({
   items,
   currency,
   promoCode,
+  initialPaymentMethod = 'Card',
   onClose,
   onCompleteOrder,
 }: CheckoutModalProps) {
@@ -291,13 +338,33 @@ export function CheckoutModal({
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('Dubai');
   const [country, setCountry] = useState('United Arab Emirates');
-  const [paymentMethod, setPaymentMethod] = useState<'Card' | 'Cash on Delivery (UAE)'>('Card');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(initialPaymentMethod);
   const [error, setError] = useState('');
   const [confirmedOrder, setConfirmedOrder] = useState<OrderRecord | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setPaymentMethod(initialPaymentMethod);
+    }
+  }, [open, initialPaymentMethod]);
 
   if (!open) return null;
 
   const summary = calculateCartSummary(items, promoCode);
+  const resolvedTrack: WorkflowTrack = items.some(
+    (i) => i.workflowTrack === 'Digital Bespoke (10–12 Weeks)'
+  )
+    ? 'Digital Bespoke (10–12 Weeks)'
+    : items.some((i) => i.isMadeToMeasure || i.workflowTrack === 'Made-to-Measure (3–4 Weeks)')
+      ? 'Made-to-Measure (3–4 Weeks)'
+      : 'Ready-to-Ship Prime';
+
+  const resolvedEta =
+    resolvedTrack === 'Digital Bespoke (10–12 Weeks)'
+      ? '10–12 Weeks (7-Step Bespoke Pipeline)'
+      : resolvedTrack === 'Made-to-Measure (3–4 Weeks)'
+        ? '3–4 Weeks (Custom Tailored)'
+        : 'Dispatches Next Business Day (Prime)';
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -322,6 +389,7 @@ export function CheckoutModal({
       }),
       status: 'Confirmed',
       paymentMethod,
+      workflowTrack: resolvedTrack,
       customerName: customerName.trim(),
       email: email.trim(),
       phone: phone.trim(),
@@ -332,7 +400,7 @@ export function CheckoutModal({
       discountAED: summary.discountAED,
       promoCode: promoCode || undefined,
       totalAED: summary.totalAED,
-      estimatedDelivery: 'Nov 30 – Dec 03, 2026',
+      estimatedDelivery: resolvedEta,
     };
     setConfirmedOrder(record);
     onCompleteOrder(record);
@@ -385,7 +453,13 @@ export function CheckoutModal({
 
             <div className="bg-[#FAF9F7] dark:bg-[#0E1214] border border-[#E5E5E3] dark:border-[#262D31] p-5 text-left text-xs space-y-2 max-w-md mx-auto tabular-nums">
               <div className="flex justify-between">
-                <span className="text-[#595959] dark:text-[#A8ACAF]">Payment Method</span>
+                <span className="text-[#595959] dark:text-[#A8ACAF]">Fulfillment Track</span>
+                <span className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+                  {confirmedOrder.workflowTrack || 'Ready-to-Ship Prime'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#595959] dark:text-[#A8ACAF]">Payment Gateway</span>
                 <span className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">{confirmedOrder.paymentMethod}</span>
               </div>
               <div className="flex justify-between">
@@ -395,7 +469,7 @@ export function CheckoutModal({
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-[#E5E5E3] dark:border-[#262D31]">
-                <span className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">Total Paid (Duties Included)</span>
+                <span className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">Total Paid (DDP Included)</span>
                 <span className="font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
                   {formatMoney(confirmedOrder.totalAED, currency)}
                 </span>
@@ -521,24 +595,32 @@ export function CheckoutModal({
               </div>
             </div>
 
-            {/* Payment Options */}
+            {/* Payment Options (Shopify Payments + Express Wallets + UAE COD) */}
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1C1C1C] dark:text-[#F4F3EE] mb-2">
-                Payment Method
+                Payment Method (DDP Customs &amp; Taxes Included)
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {(['Card', 'Cash on Delivery (UAE)'] as const).map((method) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {(
+                  [
+                    { id: 'Shop Pay', label: 'Shop Pay / Installments' },
+                    { id: 'PayPal', label: 'PayPal Express' },
+                    { id: 'Amazon Pay', label: 'Amazon Pay' },
+                    { id: 'Card', label: 'Credit / Debit Card' },
+                    { id: 'Cash on Delivery (UAE)', label: 'Cash on Delivery (UAE)' },
+                  ] as const
+                ).map((method) => (
                   <button
-                    key={method}
+                    key={method.id}
                     type="button"
-                    onClick={() => setPaymentMethod(method)}
-                    className={`py-3 px-4 border text-xs font-semibold text-left transition-colors ${
-                      paymentMethod === method
+                    onClick={() => setPaymentMethod(method.id)}
+                    className={`py-2.5 px-3 border text-xs font-semibold text-left transition-colors ${
+                      paymentMethod === method.id
                         ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
                         : 'bg-white dark:bg-[#0E1214] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#2B3237]'
                     }`}
                   >
-                    {method === 'Card' ? 'Credit / Debit Card / Apple Pay' : 'Cash on Delivery (UAE)'}
+                    {method.label}
                   </button>
                 ))}
               </div>

@@ -2,21 +2,38 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   BUILDER_BASE_PRICE_AED,
+  CURRENCIES,
+  MADE_TO_MEASURE_SURCHARGE_AED,
   calculateBuilderPriceAED,
   calculateCartSummary,
   calculateCorporateQuote,
+  calculateInstallments,
   convertFromAED,
   filterAndSortProducts,
   formatMoney,
+  usdToAED,
   validatePromoCode,
 } from './commerce';
 import type { BuilderConfig, CartItem, Product } from '../types';
 
-test('currency conversion and formatting work for AED and USD', () => {
+test('supports 100+ currencies and accurate AED/USD conversion', () => {
+  assert.ok(Object.keys(CURRENCIES).length >= 100, 'Expected at least 100 currencies');
   assert.equal(formatMoney(976, 'AED'), 'Dhs. 976.00 AED');
-  assert.equal(convertFromAED(1000, 'AED'), 1000);
-  assert.equal(convertFromAED(1000, 'USD'), 272.3);
-  assert.equal(formatMoney(1000, 'USD'), '$272.30');
+  assert.equal(convertFromAED(MADE_TO_MEASURE_SURCHARGE_AED, 'USD'), 50);
+  assert.equal(formatMoney(MADE_TO_MEASURE_SURCHARGE_AED, 'USD'), '$50.00');
+  assert.equal(convertFromAED(BUILDER_BASE_PRICE_AED, 'USD'), 400);
+  assert.equal(formatMoney(BUILDER_BASE_PRICE_AED, 'USD'), '$400.00');
+});
+
+test('Shop Pay BNPL installments compute 4 interest-free biweekly and 12-month Affirm plans', () => {
+  const jacket239 = usdToAED(239.2);
+  const planStandard = calculateInstallments(jacket239);
+  assert.equal(convertFromAED(planStandard.biweeklyAmountAED, 'USD'), 59.8);
+  assert.equal(planStandard.qualifiesForMonthly, true);
+
+  const planBespoke = calculateInstallments(BUILDER_BASE_PRICE_AED);
+  assert.equal(convertFromAED(planBespoke.biweeklyAmountAED, 'USD'), 100);
+  assert.equal(convertFromAED(planBespoke.monthly12AmountAED, 'USD'), 36.1);
 });
 
 test('promo code validation handles UAE10, BF25, and invalid codes', () => {
@@ -58,12 +75,14 @@ test('cart summary computes subtotal, promo discount, savings, and loyalty point
   assert.ok(summaryWithPromo.loyaltyPoints > 2000);
 });
 
-test('custom jacket builder calculates exact AED deltas matching The Jacket Maker UAE', () => {
+test('custom jacket builder starts at $400 USD and calculates exact add-on deltas', () => {
   const baseConfig: BuilderConfig = {
     baseStyle: 'cafe-racer',
     leatherType: 'sheepskin',
     leatherFinish: 'semi-aniline',
     shade: 'Jet Black',
+    isCustomPantone: false,
+    pantoneCode: '',
     hardware: 'Silver',
     lining: 'quilted-polyester',
     exteriorEmbroidery: 'none',
@@ -73,23 +92,26 @@ test('custom jacket builder calculates exact AED deltas matching The Jacket Make
     standardSize: 'M',
   };
 
-  assert.equal(calculateBuilderPriceAED(baseConfig), BUILDER_BASE_PRICE_AED);
+  assert.equal(convertFromAED(calculateBuilderPriceAED(baseConfig), 'USD'), 400);
 
-  const upgraded: BuilderConfig = {
-    ...baseConfig,
-    baseStyle: 'mid-length-coat', // +1444
-    leatherType: 'goatskin', // +722
-    leatherFinish: 'burnished', // +722
-    lining: 'cotton', // +722
-    innerPersonalization: 'initials', // +722
-  };
-  assert.equal(calculateBuilderPriceAED(upgraded), 5776 + 1444 + 722 + 722 + 722 + 722);
+  // Vest (-$50) -> $350
+  const vestConfig: BuilderConfig = { ...baseConfig, baseStyle: 'leather-vest' };
+  assert.equal(convertFromAED(calculateBuilderPriceAED(vestConfig), 'USD'), 350);
 
-  const vestConfig: BuilderConfig = {
+  // Full-length coat (+$150) + Calf Hide (+$150) + Textured (+$200) + Pantone (+$100) + Matte Black (+$20) + Faux Fur (+$150) + Back Embroidery (+$100) + Phrase (+$100) = $1,370
+  const maxedConfig: BuilderConfig = {
     ...baseConfig,
-    baseStyle: 'leather-vest', // -722
+    baseStyle: 'full-length-coat',
+    leatherType: 'calf-hide',
+    leatherFinish: 'textured',
+    isCustomPantone: true,
+    pantoneCode: 'PMS 19-4052',
+    hardware: 'Matte Black',
+    lining: 'faux-fur',
+    exteriorEmbroidery: 'back',
+    innerPersonalization: 'phrase',
   };
-  assert.equal(calculateBuilderPriceAED(vestConfig), 5776 - 722);
+  assert.equal(convertFromAED(calculateBuilderPriceAED(maxedConfig), 'USD'), 1370);
 });
 
 test('catalog filtering and sorting handle search, gender, leather, and price order', () => {
@@ -152,7 +174,10 @@ test('catalog filtering and sorting handle search, gender, leather, and price or
   assert.equal(searchSuede[0].id, '1');
 });
 
-test('corporate bulk quote applies correct volume tiers', () => {
+test('corporate bulk quote applies volume tiers with no minimum order quantity', () => {
+  const single = calculateCorporateQuote(1, 'leather-jacket', false);
+  assert.equal(single.discountPercent, 0);
+
   const tier1 = calculateCorporateQuote(15, 'leather-jacket', false);
   assert.equal(tier1.discountPercent, 15);
   assert.equal(tier1.unitBaseAED, 1180);

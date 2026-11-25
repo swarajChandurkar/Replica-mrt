@@ -5,13 +5,16 @@ import type { BuilderConfig, CartItem, CurrencyCode } from '../types';
 import {
   BUILDER_EMBROIDERY_DELTAS,
   BUILDER_FINISH_DELTAS,
+  BUILDER_HARDWARE_DELTAS,
   BUILDER_LEATHER_DELTAS,
   BUILDER_LINING_DELTAS,
+  BUILDER_PANTONE_SURCHARGE_AED,
   BUILDER_PERSONALIZATION_DELTAS,
   BUILDER_STYLE_DELTAS,
   calculateBuilderPriceAED,
   formatMoney,
 } from '../utils/commerce';
+import { InstallmentsBanner } from './InstallmentsBanner';
 import { SafeImage } from './SafeImage';
 
 interface JacketBuilderPageProps {
@@ -33,6 +36,7 @@ const HARDWARE_OPTIONS: BuilderConfig['hardware'][] = [
   'Silver',
   'Antique Brass',
   'Gunmetal',
+  'Matte Black',
   'Brushed Gold',
 ];
 
@@ -46,6 +50,8 @@ export function JacketBuilderPage({
     leatherType: 'sheepskin',
     leatherFinish: 'semi-aniline',
     shade: 'Jet Black',
+    isCustomPantone: false,
+    pantoneCode: '',
     hardware: 'Silver',
     lining: 'quilted-polyester',
     exteriorEmbroidery: 'none',
@@ -70,10 +76,13 @@ export function JacketBuilderPage({
           : activeShade.image;
 
   const handleAddBespokeToCart = () => {
+    const shadeLabel = config.isCustomPantone
+      ? `Custom Pantone (${config.pantoneCode.trim() || 'Consultant Match'})`
+      : config.shade;
     const summary: string[] = [
       `Style: ${BUILDER_STYLE_DELTAS[config.baseStyle].label}`,
       `Hide: ${BUILDER_LEATHER_DELTAS[config.leatherType].label} (${BUILDER_FINISH_DELTAS[config.leatherFinish].label})`,
-      `Shade: ${config.shade} · Hardware: ${config.hardware}`,
+      `Shade: ${shadeLabel} · Hardware: ${BUILDER_HARDWARE_DELTAS[config.hardware].label}`,
       `Lining: ${BUILDER_LINING_DELTAS[config.lining].label}`,
     ];
     if (config.exteriorEmbroidery !== 'none') {
@@ -96,9 +105,10 @@ export function JacketBuilderPage({
       image: previewImage,
       unitPriceAED: totalAED,
       quantity: 1,
-      color: config.shade,
+      color: shadeLabel,
       size: config.fitType === 'made-to-measure' ? 'Made to Measure' : config.standardSize,
       isMadeToMeasure: config.fitType === 'made-to-measure',
+      workflowTrack: 'Digital Bespoke (10–12 Weeks)',
       customSummary: summary,
     });
     setAddedNotice(true);
@@ -173,13 +183,22 @@ export function JacketBuilderPage({
             <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Shade &amp; Hardware</span>
               <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
-                {config.shade} · {config.hardware}
+                {config.isCustomPantone
+                  ? `Pantone ${config.pantoneCode.trim() || 'Custom'}`
+                  : config.shade}{' '}
+                · {config.hardware}
               </span>
             </div>
             <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
               <span>Inner Lining</span>
               <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
                 {BUILDER_LINING_DELTAS[config.lining].label}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
+              <span>Digital Bespoke Pipeline</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+                10–12 Weeks · 7 Steps
               </span>
             </div>
             <div className="pt-3 mt-2 border-t border-[#E5E5E3] dark:border-[#262D31] flex items-baseline justify-between">
@@ -192,6 +211,9 @@ export function JacketBuilderPage({
               >
                 {formatMoney(totalAED, currency)}
               </span>
+            </div>
+            <div className="pt-2.5 border-t border-[#ECECE9] dark:border-[#23292D]">
+              <InstallmentsBanner amountAED={totalAED} currency={currency} mode="bespoke" />
             </div>
           </div>
         </div>
@@ -311,7 +333,7 @@ export function JacketBuilderPage({
             </div>
           </fieldset>
 
-          {/* 4. Shade & Hardware */}
+          {/* 4. Shade (incl. Custom Pantone +$100) & Hardware (incl. Matte Black +$20) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <fieldset className="space-y-3">
               <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
@@ -319,12 +341,14 @@ export function JacketBuilderPage({
               </legend>
               <div className="grid grid-cols-2 gap-2">
                 {SHADES.map((shade) => {
-                  const active = config.shade === shade.name;
+                  const active = !config.isCustomPantone && config.shade === shade.name;
                   return (
                     <button
                       key={shade.name}
                       type="button"
-                      onClick={() => setConfig((c) => ({ ...c, shade: shade.name }))}
+                      onClick={() =>
+                        setConfig((c) => ({ ...c, shade: shade.name, isCustomPantone: false }))
+                      }
                       className={`px-3 py-2.5 border text-xs flex items-center gap-2 transition-colors ${
                         active
                           ? 'border-[#1C1C1C] dark:border-[#F4F3EE] bg-[#FAF9F7] dark:bg-[#1B2226] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]'
@@ -340,27 +364,71 @@ export function JacketBuilderPage({
                   );
                 })}
               </div>
+
+              {/* Custom Pantone Shade (+$100) */}
+              <button
+                type="button"
+                onClick={() => setConfig((c) => ({ ...c, isCustomPantone: !c.isCustomPantone }))}
+                aria-pressed={config.isCustomPantone}
+                className={`w-full px-3 py-2.5 border text-xs flex items-center justify-between gap-2 transition-colors ${
+                  config.isCustomPantone
+                    ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE] font-semibold'
+                    : 'border-[#D8D8D5] dark:border-[#262D31] bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
+                }`}
+              >
+                <span>Custom Pantone Shade</span>
+                <span className="tabular-nums text-[11px]">
+                  +{formatMoney(BUILDER_PANTONE_SURCHARGE_AED, currency)}
+                </span>
+              </button>
+
+              {config.isCustomPantone && (
+                <div>
+                  <label htmlFor="builder-pantone" className="sr-only">
+                    Pantone Color Code
+                  </label>
+                  <input
+                    id="builder-pantone"
+                    type="text"
+                    value={config.pantoneCode}
+                    onChange={(e) => setConfig((c) => ({ ...c, pantoneCode: e.target.value }))}
+                    placeholder="Enter Pantone code (e.g. PMS 19-4052)"
+                    className="w-full bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-3 py-2 text-xs text-[#1C1C1C] dark:text-[#F4F3EE]"
+                  />
+                </div>
+              )}
             </fieldset>
 
             <fieldset className="space-y-3">
               <legend className="text-xs font-semibold tracking-[0.14em] uppercase text-[#1C1C1C] dark:text-[#F4F3EE]">
                 05. YKK Hardware Finish
               </legend>
-              <div className="grid grid-cols-2 gap-2">
-                {HARDWARE_OPTIONS.map((hw) => (
-                  <button
-                    key={hw}
-                    type="button"
-                    onClick={() => setConfig((c) => ({ ...c, hardware: hw }))}
-                    className={`px-3 py-2.5 border text-xs transition-colors ${
-                      config.hardware === hw
-                        ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
-                        : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
-                    }`}
-                  >
-                    {hw}
-                  </button>
-                ))}
+              <div className="grid grid-cols-1 gap-2">
+                {HARDWARE_OPTIONS.map((hw) => {
+                  const meta = BUILDER_HARDWARE_DELTAS[hw];
+                  const active = config.hardware === hw;
+                  return (
+                    <button
+                      key={hw}
+                      type="button"
+                      onClick={() => setConfig((c) => ({ ...c, hardware: hw }))}
+                      className={`px-3 py-2.5 border text-xs flex items-center justify-between transition-colors ${
+                        active
+                          ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE] font-semibold'
+                          : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
+                      }`}
+                    >
+                      <span>{meta.label}</span>
+                      <span
+                        className={`text-[11px] tabular-nums ${
+                          active ? 'text-white/80 dark:text-[#0E1214]/75' : 'text-[#767676] dark:text-[#8A8E91]'
+                        }`}
+                      >
+                        {meta.deltaAED === 0 ? 'Included' : `+${formatMoney(meta.deltaAED, currency)}`}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </fieldset>
           </div>
