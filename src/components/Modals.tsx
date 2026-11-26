@@ -35,10 +35,13 @@ export function SearchModal({
 
   return (
     <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center pt-16 sm:pt-24 px-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Search Maison Valen Catalog"
+      aria-label="Search mrtinternationalholdings Catalog"
     >
       <div className="bg-white dark:bg-[#14191C] w-full max-w-2xl border border-[#E5E5E3] dark:border-[#262D31] shadow-2xl overflow-hidden text-[#1C1C1C] dark:text-[#F4F3EE]">
         <div className="px-5 py-4 border-b border-[#E5E5E3] dark:border-[#262D31] flex items-center gap-3">
@@ -162,6 +165,9 @@ export function AccountModal({
 
   return (
     <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
@@ -336,6 +342,9 @@ export function SizeGuideModal({ open, onClose }: { open: boolean; onClose: () =
 
   return (
     <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"

@@ -566,7 +566,7 @@ export const PRODUCTS: Product[] = [
 export const PRESS_QUOTES = [
   {
     outlet: 'FORBES',
-    quote: '“Maison Valen, where modern tailoring meets on-demand handcrafted leather outerwear.”',
+    quote: '“mrtinternationalholdings, where modern tailoring meets on-demand handcrafted leather outerwear.”',
   },
   {
     outlet: 'GQ',
@@ -578,11 +578,11 @@ export const PRESS_QUOTES = [
   },
   {
     outlet: 'GEAR PATROL',
-    quote: '“Maison Valen’s range of stylish leather weekend bags ticks all the boxes.”',
+    quote: '“mrtinternationalholdings’s range of stylish leather weekend bags ticks all the boxes.”',
   },
   {
     outlet: 'BUSINESS INSIDER',
-    quote: '“For a brand-new leather jacket with bespoke fit, I recommend Maison Valen.”',
+    quote: '“For a brand-new leather jacket with bespoke fit, I recommend mrtinternationalholdings.”',
   },
   {
     outlet: 'ROBB REPORT',
@@ -637,8 +637,8 @@ export const CUSTOMER_REVIEWS: ProductReview[] = [
     location: 'Riyadh, KSA',
     rating: 5,
     date: 'August 2026',
-    title: 'My third bespoke jacket from Maison Valen',
-    body: 'This is the third made-to-order jacket I have commissioned from Maison Valen. Every single one fits impeccably, arrived quickly duty-free, and exceeds department store pieces twice the price.',
+    title: 'My third bespoke jacket from mrtinternationalholdings',
+    body: 'This is the third made-to-order jacket I have commissioned from mrtinternationalholdings. Every single one fits impeccably, arrived quickly duty-free, and exceeds department store pieces twice the price.',
     verifiedFit: 'Bespoke Custom',
   },
 ];

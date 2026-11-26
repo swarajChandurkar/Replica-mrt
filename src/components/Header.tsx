@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -58,6 +58,29 @@ export function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [currencyQuery, setCurrencyQuery] = useState('');
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const currencyRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
+        setCurrencyOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCurrencyOpen(false);
+        setOpenDropdown(null);
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const activeCurrency = CURRENCIES[currency] || CURRENCIES.AED;
   const filteredCurrencies = currencyQuery.trim()
@@ -76,21 +99,48 @@ export function Header({
 
   const activeAnnouncement = ANNOUNCEMENTS[announcementIdx];
 
-  const navItems: { label: string; target: AppPage; isSale?: boolean; isActive: boolean }[] = [
+  const navItems: {
+    label: string;
+    target: AppPage;
+    isSale?: boolean;
+    isActive: boolean;
+    subItems?: { label: string; target: AppPage }[];
+  }[] = [
     {
       label: 'MEN',
       target: { view: 'collection', filter: 'men' },
       isActive: page.view === 'collection' && page.filter === 'men',
+      subItems: [
+        { label: "All Men's Outerwear", target: { view: 'collection', filter: 'men' } },
+        { label: 'Leather Jackets', target: { view: 'collection', filter: 'men', category: 'leather-jackets' } },
+        { label: 'Suede Jackets', target: { view: 'collection', filter: 'men', category: 'suede-jackets' } },
+        { label: 'Biker Jackets', target: { view: 'collection', filter: 'men', category: 'biker-jackets' } },
+        { label: 'Bomber Jackets', target: { view: 'collection', filter: 'men', category: 'bomber-jackets' } },
+        { label: 'Leather Coats', target: { view: 'collection', filter: 'men', category: 'leather-coats' } },
+        { label: 'Tailored Wool Suits', target: { view: 'collection', filter: 'suits' } },
+        { label: "Men's Shoes & Boots", target: { view: 'collection', filter: 'shoes' } },
+      ],
     },
     {
       label: 'WOMEN',
       target: { view: 'collection', filter: 'women' },
       isActive: page.view === 'collection' && page.filter === 'women',
+      subItems: [
+        { label: "All Women's Collection", target: { view: 'collection', filter: 'women' } },
+        { label: 'Biker Jackets', target: { view: 'collection', filter: 'women', category: 'biker-jackets' } },
+        { label: 'Leather Trench & Coats', target: { view: 'collection', filter: 'women', category: 'leather-coats' } },
+        { label: 'Leather Bags & Carryalls', target: { view: 'collection', filter: 'bags' } },
+      ],
     },
     {
       label: 'CUSTOMIZE',
       target: { view: 'customize' },
       isActive: page.view === 'customize',
+      subItems: [
+        { label: 'Custom Jackets Overview', target: { view: 'customize' } },
+        { label: 'Design Your Own Studio', target: { view: 'builder' } },
+        { label: 'Corporate & Team Gifts', target: { view: 'corporate' } },
+      ],
     },
     {
       label: 'BRAND',
@@ -123,6 +173,7 @@ export function Header({
   const handleNavClick = (target: AppPage) => {
     onNavigate(target);
     setMobileMenuOpen(false);
+    setOpenDropdown(null);
   };
 
   return (
@@ -183,25 +234,29 @@ export function Header({
           </button>
         </div>
 
-        {/* Center: Iconic Stacked Editorial Didone Wordmark — Maison Valen */}
+        {/* Center: Iconic Stacked Editorial Wordmark matching thejacketmaker.ae — mrtinternationalholdings */}
         <button
           type="button"
           onClick={() => handleNavClick({ view: 'home' })}
-          aria-label="Maison Valen Home"
+          aria-label="mrtinternationalholdings Home"
+          title="mrtinternationalholdings"
           className="shrink-0 flex flex-col items-center leading-none group py-0.5"
         >
-          <span className="font-display text-[8.5px] sm:text-[9.5px] tracking-[0.34em] font-medium text-[#595959] dark:text-[#B0B3B5] uppercase">
-            MAISON
+          <span className="font-display text-[9px] sm:text-[10px] tracking-[0.34em] font-semibold text-[#595959] dark:text-[#B0B3B5] uppercase">
+            MRT
           </span>
-          <span className="font-display text-[20px] sm:text-[26px] tracking-[0.14em] font-bold text-[#141414] dark:text-[#F4F3EE] mt-0.5 uppercase">
-            VALEN
+          <span className="font-display text-[13px] sm:text-[16px] tracking-[0.16em] font-bold text-[#141414] dark:text-[#F4F3EE] mt-0.5 uppercase">
+            INTERNATIONAL
+          </span>
+          <span className="font-display text-[13px] sm:text-[16px] tracking-[0.22em] font-bold text-[#141414] dark:text-[#F4F3EE] mt-0.5 uppercase">
+            HOLDINGS
           </span>
         </button>
 
         {/* Right: Currency, Theme Toggle, Account, Cart */}
         <div className="flex items-center justify-end gap-0.5 sm:gap-4 flex-1 min-w-0">
           {/* Currency Selector — 100+ World Currencies */}
-          <div className="relative hidden md:block">
+          <div ref={currencyRef} className="relative hidden md:block">
             <button
               type="button"
               aria-label="Select currency"
@@ -334,28 +389,51 @@ export function Header({
       >
         <div className="max-w-[1440px] mx-auto px-8 h-11 flex items-center justify-center gap-7 xl:gap-9">
           {navItems.map((item) => (
-            <button
+            <div
               key={item.label}
-              type="button"
-              onClick={() => handleNavClick(item.target)}
-              className={`relative h-full inline-flex items-center text-[11.5px] font-medium tracking-[0.13em] whitespace-nowrap shrink-0 transition-colors ${
-                item.isSale
-                  ? 'text-[#C41E24] dark:text-[#E8555A] hover:text-[#99161B] dark:hover:text-[#F07175] font-semibold'
-                  : item.isActive
-                    ? 'text-[#1C1C1C] dark:text-[#F4F3EE]'
-                    : 'text-[#4A4A4A] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
-              }`}
+              className="relative h-full flex items-center"
+              onMouseEnter={() => item.subItems && setOpenDropdown(item.label)}
+              onMouseLeave={() => setOpenDropdown((cur) => (cur === item.label ? null : cur))}
             >
-              {item.label}
-              {item.isActive && (
-                <span
-                  aria-hidden="true"
-                  className={`absolute bottom-0 left-0 right-0 h-[2px] ${
-                    item.isSale ? 'bg-[#C41E24] dark:bg-[#E8555A]' : 'bg-[#1C1C1C] dark:bg-[#F4F3EE]'
-                  }`}
-                />
+              <button
+                type="button"
+                aria-expanded={item.subItems ? openDropdown === item.label : undefined}
+                onClick={() => handleNavClick(item.target)}
+                className={`relative h-full inline-flex items-center gap-1 text-[11.5px] font-medium tracking-[0.13em] whitespace-nowrap shrink-0 transition-colors ${
+                  item.isSale
+                    ? 'text-[#C41E24] dark:text-[#E8555A] hover:text-[#99161B] dark:hover:text-[#F07175] font-semibold'
+                    : item.isActive
+                      ? 'text-[#1C1C1C] dark:text-[#F4F3EE]'
+                      : 'text-[#4A4A4A] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
+                }`}
+              >
+                <span>{item.label}</span>
+                {item.subItems && <ChevronDown className="w-3 h-3 opacity-60" aria-hidden="true" />}
+                {item.isActive && (
+                  <span
+                    aria-hidden="true"
+                    className={`absolute bottom-0 left-0 right-0 h-[2px] ${
+                      item.isSale ? 'bg-[#C41E24] dark:bg-[#E8555A]' : 'bg-[#1C1C1C] dark:bg-[#F4F3EE]'
+                    }`}
+                  />
+                )}
+              </button>
+
+              {item.subItems && openDropdown === item.label && (
+                <div className="absolute left-0 top-full w-60 bg-white dark:bg-[#151A1D] border border-[#E5E5E3] dark:border-[#262D31] shadow-xl py-2 z-50">
+                  {item.subItems.map((sub) => (
+                    <button
+                      key={sub.label}
+                      type="button"
+                      onClick={() => handleNavClick(sub.target)}
+                      className="w-full text-left px-4 py-2 text-xs text-[#4A4A4A] dark:text-[#B0B3B5] hover:bg-[#FAF9F7] dark:hover:bg-[#1C2327] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] transition-colors"
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
               )}
-            </button>
+            </div>
           ))}
         </div>
       </nav>

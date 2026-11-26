@@ -27,12 +27,12 @@ import type {
 import { calculateCartSummary } from './utils/commerce';
 
 const STORAGE_KEYS = {
-  CART: 'mv_ae_cart_v1',
-  WISHLIST: 'mv_ae_wishlist_v1',
-  ORDERS: 'mv_ae_orders_v1',
-  INQUIRIES: 'mv_ae_inquiries_v1',
-  CURRENCY: 'mv_ae_currency_v1',
-  THEME: 'mv_ae_theme_v1',
+  CART: 'mrt_ae_cart_v1',
+  WISHLIST: 'mrt_ae_wishlist_v1',
+  ORDERS: 'mrt_ae_orders_v1',
+  INQUIRIES: 'mrt_ae_inquiries_v1',
+  CURRENCY: 'mrt_ae_currency_v1',
+  THEME: 'mrt_ae_theme_v1',
 } as const;
 
 function readStorage<T>(key: string, fallback: T): T {
@@ -73,6 +73,19 @@ export default function App() {
 
   const isFirstThemeMount = useRef(true);
   const themeTransitionTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setCartOpen(false);
+      setCheckoutOpen(false);
+      setSearchOpen(false);
+      setAccountOpen(false);
+      setSizeGuideOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

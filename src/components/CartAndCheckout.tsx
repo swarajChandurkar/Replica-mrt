@@ -379,7 +379,7 @@ export function CheckoutModal({
       return;
     }
     setError('');
-    const orderNumber = `MV-AE-${Math.floor(10000 + Math.random() * 89999)}`;
+    const orderNumber = `MRT-AE-${Math.floor(10000 + Math.random() * 89999)}`;
     const record: OrderRecord = {
       orderNumber,
       placedAt: new Date().toLocaleDateString('en-US', {
@@ -408,6 +408,12 @@ export function CheckoutModal({
 
   return (
     <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setConfirmedOrder(null);
+          onClose();
+        }
+      }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 overflow-y-auto"
       role="dialog"
       aria-modal="true"

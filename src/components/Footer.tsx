@@ -148,7 +148,7 @@ export function Footer({ onNavigate }: FooterProps) {
               <div className="border border-[#1C1C1C] dark:border-[#F4F3EE] bg-white dark:bg-[#171D20] p-4 text-sm text-[#1C1C1C] dark:text-[#F4F3EE] flex items-start gap-2.5">
                 <Check className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
-                  <p className="font-semibold">Welcome to Maison Valen.</p>
+                  <p className="font-semibold">Welcome to mrtinternationalholdings.</p>
                   <p className="text-xs text-[#595959] dark:text-[#A8ACAF] mt-0.5">
                     Use code <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">UAE10</strong> at
                     checkout for 10% off your order.
@@ -186,7 +186,7 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         <div className="mt-10 sm:mt-14 pt-6 border-t border-[#E5E5E3] dark:border-[#23292D] flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-[#767676] dark:text-[#84888B] text-center sm:text-left">
-          <p>© 2026 Maison Valen UAE. Handcrafted Full-Grain Leather Outerwear &amp; Goods.</p>
+          <p>© 2026 mrtinternationalholdings. Handcrafted Full-Grain Leather Outerwear &amp; Goods.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:gap-6">
             <span>Free Express UAE Shipping</span>
             <span aria-hidden="true">·</span>

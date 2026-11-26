@@ -102,7 +102,7 @@ export function CustomizePage({ currency, onNavigate, onSubmitInquiry }: Customi
           <div className="lg:col-span-6 aspect-[4/3] bg-[#EFEFED] dark:bg-[#181E21] overflow-hidden">
             <SafeImage
               src={ASSETS.BESPOKE_CRAFT}
-              alt="Maison Valen bespoke leather atelier workbench"
+              alt="mrtinternationalholdings bespoke leather atelier workbench"
               className="w-full h-full object-cover"
             />
           </div>
@@ -213,7 +213,7 @@ export function CustomizePage({ currency, onNavigate, onSubmitInquiry }: Customi
             <p className="text-xs text-[#595959] dark:text-[#A8ACAF]">
               Quantity tier: <strong>{submitted.quantity}</strong> · Country:{' '}
               <strong>{submitted.country}</strong> · Gender: <strong>{submitted.gender}</strong>. A
-              dedicated Maison Valen consultant will reply to {submitted.email} within 24 hours.
+              dedicated mrtinternationalholdings consultant will reply to {submitted.email} within 24 hours.
             </p>
           </div>
         ) : (
@@ -376,7 +376,7 @@ export function CustomizePage({ currency, onNavigate, onSubmitInquiry }: Customi
 }
 
 /* -------------------------------------------------------------------------- */
-/* 2. BRAND / OUR STORY PAGE — Maison Valen Heritage & Craftsmanship          */
+/* 2. BRAND / OUR STORY PAGE — mrtinternationalholdings Heritage & Craft    */
 /* -------------------------------------------------------------------------- */
 
 export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => void }) {
@@ -422,8 +422,8 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
         <div className="space-y-5 text-base text-[#444444] dark:text-[#B5B9BC] leading-relaxed">
           <p>
             Any wardrobe is simply incomplete without a great leather jacket. A search for a truly
-            well-made leather jacket is exactly where Maison Valen began, when our founding team
-            set out to commission honest, full-grain outerwear for ourselves.
+            well-made leather jacket is exactly where mrtinternationalholdings began, when our
+            founding team set out to commission honest, full-grain outerwear for ourselves.
           </p>
           <p>
             We were frustrated by the choice between fast-fashion pieces that peel after a season
@@ -438,12 +438,12 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
             craftsmanship at honest, accessible pricing.
           </p>
           <p className="font-display text-lg text-[#1C1C1C] dark:text-[#F4F3EE] font-semibold pt-2">
-            — Tariq Valen, Founder &amp; Creative Director
+            — mrtinternationalholdings Founding Atelier
           </p>
         </div>
       </section>
 
-      {/* The Maison Valen Difference */}
+      {/* The mrtinternationalholdings Difference */}
       <section className="bg-[#FAF9F7] dark:bg-[#13181B] border-y border-[#E5E5E3] dark:border-[#23292D] py-16 lg:py-20">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -452,12 +452,12 @@ export function BrandStoryPage({ onNavigate }: { onNavigate: (page: AppPage) => 
                 Craft Philosophy
               </p>
               <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
-                The Maison Valen Difference
+                The mrtinternationalholdings Difference
               </h2>
               <div className="aspect-[4/3] bg-[#EFEFED] dark:bg-[#181E21] overflow-hidden">
                 <SafeImage
                   src={ASSETS.BESPOKE_CRAFT}
-                  alt="Maison Valen artisan hand-cutting full-grain leather hide"
+                  alt="mrtinternationalholdings artisan hand-cutting full-grain leather hide"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -771,7 +771,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
     onAddToCart({
       productId: `gift-card-${amountAED}-${format}`,
       slug: 'gift-cards',
-      name: `Maison Valen Gift Card (${format})`,
+      name: `mrtinternationalholdings Gift Card (${format})`,
       image: ASSETS.LEATHER_WEEKENDER,
       unitPriceAED: amountAED,
       quantity: 1,
@@ -794,10 +794,10 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
             <div className="flex items-start justify-between">
               <div>
                 <p className="font-display text-[10px] tracking-[0.34em] uppercase text-white/70">
-                  MAISON
+                  MRT INTERNATIONAL HOLDINGS
                 </p>
-                <p className="font-display text-3xl font-bold tracking-[0.14em] uppercase leading-none mt-0.5">
-                  VALEN
+                <p className="font-display text-lg sm:text-xl font-bold tracking-[0.1em] leading-none mt-1">
+                  mrtinternationalholdings
                 </p>
                 <p className="text-[11px] tracking-[0.16em] uppercase text-white/60 mt-2">
                   UAE Atelier · {format}
@@ -833,7 +833,7 @@ export function GiftingPage({ currency, onAddToCart }: GiftingPageProps) {
               Gifting Concierge
             </p>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
-              Maison Valen Gift Card
+              mrtinternationalholdings Gift Card
             </h1>
           </div>
 
@@ -936,7 +936,7 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
   );
   const [unit, setUnit] = useState<'cm' | 'in'>('cm');
   const [sizeGender, setSizeGender] = useState<'men' | 'women'>('men');
-  const [trackInput, setTrackInput] = useState('MV-AE-84920');
+  const [trackInput, setTrackInput] = useState('MRT-AE-84920');
   const [trackedOrder, setTrackedOrder] = useState<OrderRecord | 'not-found' | null>(null);
   const [contactSent, setContactSent] = useState(false);
 
@@ -948,9 +948,9 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
       setTrackedOrder(found);
       return;
     }
-    if (cleaned === 'MV-AE-84920') {
+    if (cleaned === 'MRT-AE-84920') {
       setTrackedOrder({
-        orderNumber: 'MV-AE-84920',
+        orderNumber: 'MRT-AE-84920',
         placedAt: 'November 21, 2026',
         status: 'Quality Inspection',
         paymentMethod: 'Card',
@@ -1014,8 +1014,8 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
       {tab === 'track' && (
         <div className="max-w-2xl space-y-6">
           <p className="text-sm text-[#595959] dark:text-[#A8ACAF]">
-            Enter your Maison Valen order number (try demo order{' '}
-            <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">MV-AE-84920</strong> or any order placed during this
+            Enter your mrtinternationalholdings order number (try demo order{' '}
+            <strong className="text-[#1C1C1C] dark:text-[#F4F3EE]">MRT-AE-84920</strong> or any order placed during this
             session).
           </p>
           <form onSubmit={handleTrack} className="flex gap-2">
@@ -1027,7 +1027,7 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
               type="text"
               value={trackInput}
               onChange={(e) => setTrackInput(e.target.value)}
-              placeholder="e.g. MV-AE-84920"
+              placeholder="e.g. MRT-AE-84920"
               className="flex-1 bg-white dark:bg-[#14191C] border border-[#D4D4D0] dark:border-[#2B3237] px-4 py-3 text-sm text-[#1C1C1C] dark:text-[#F4F3EE]"
             />
             <button
@@ -1040,7 +1040,7 @@ export function HelpPage({ initialTab = 'track', orders, currency }: HelpPagePro
 
           {trackedOrder === 'not-found' && (
             <p className="text-sm text-[#C41E24] dark:text-[#E8555A]">
-              No order matched that ID. Try <strong>MV-AE-84920</strong> or check your Order
+              No order matched that ID. Try <strong>MRT-AE-84920</strong> or check your Order
               History under Account.
             </p>
           )}

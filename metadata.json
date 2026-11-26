@@ -1,6 +1,6 @@
 {
-  "name": "The Jacket Maker UAE",
-  "description": "Handcrafted full-grain leather jackets, suede outerwear, bespoke custom jackets, tailored suits, and leather goods — direct to you across the UAE and worldwide.",
+  "name": "mrtinternationalholdings",
+  "description": "mrtinternationalholdings — handcrafted full-grain leather jackets, suede outerwear, bespoke custom jackets, tailored suits, and leather goods — direct to you across the UAE and worldwide.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

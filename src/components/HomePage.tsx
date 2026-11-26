@@ -77,6 +77,15 @@ export function HomePage({
   const [reelProgress, setReelProgress] = useState(0);
 
   useEffect(() => {
+    if (!activeVideo) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveVideo(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeVideo]);
+
+  useEffect(() => {
     if (!activeVideo || !isPlaying) return;
     const timer = window.setInterval(() => {
       setReelProgress((prev) => (prev >= 100 ? 0 : prev + 2));
@@ -202,14 +211,15 @@ export function HomePage({
               </p>
               <p className="hidden lg:block text-[15px] text-[#454542] dark:text-[#B5B9BC] leading-relaxed max-w-md mb-8">
                 Full-grain handcrafted leather jackets, velvet-nap suede, and bespoke tailoring by
-                Maison Valen — shipped free across the UAE with all customs duties covered.
+                mrtinternationalholdings — shipped free across the UAE with all customs duties
+                covered.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-6">
                 <button
                   type="button"
                   onClick={() => onNavigate({ view: 'collection', filter: 'sale' })}
-                  className="px-8 py-2.5 lg:px-9 lg:py-3.5 border border-[#141414] dark:border-[#F4F3EE] bg-transparent hover:bg-[#141414] hover:text-white dark:hover:bg-[#F4F3EE] dark:hover:text-[#0E1214] text-[#141414] dark:text-[#F4F3EE] text-[11px] lg:text-xs font-semibold tracking-[0.18em] uppercase transition-colors whitespace-nowrap shrink-0"
+                  className="px-8 py-3 lg:px-9 lg:py-3.5 bg-[#141414] hover:bg-black dark:bg-[#F4F3EE] dark:hover:bg-white text-white dark:text-[#0E1214] text-[11px] lg:text-xs font-semibold tracking-[0.18em] uppercase transition-colors whitespace-nowrap shrink-0"
                 >
                   Shop The Sale
                 </button>
@@ -235,7 +245,7 @@ export function HomePage({
             >
               <SafeImage
                 src={ASSETS.HERO_CAMPAIGN}
-                alt="Maison Valen UAE Black Friday Event models wearing full-grain handcrafted black biker, cognac cafe racer, and shearling aviator leather jackets"
+                alt="mrtinternationalholdings Black Friday Event models wearing full-grain handcrafted black biker, cognac cafe racer, and shearling aviator leather jackets"
                 className="absolute top-0 left-1/2 -translate-x-[74.5%] h-full w-auto max-w-none lg:inset-0 lg:left-0 lg:translate-x-0 lg:w-full lg:h-full lg:object-cover lg:object-[92%_6%] hero-seamless-mask"
               />
               {/* Light desktop left-fade & bottom dissolve scrims (separate layers so gradients crossfade smoothly via opacity) */}
@@ -258,7 +268,7 @@ export function HomePage({
             >
               <SafeImage
                 src={ASSETS.HERO_CAMPAIGN_DARK}
-                alt="Maison Valen UAE Black Friday Event dark editorial campaign models in handcrafted leather outerwear"
+                alt="mrtinternationalholdings Black Friday Event dark editorial campaign models in handcrafted leather outerwear"
                 className="absolute top-0 left-1/2 -translate-x-[76.2%] h-full w-auto max-w-none lg:inset-0 lg:left-0 lg:translate-x-0 lg:w-full lg:h-full lg:object-cover lg:object-[92%_6%] hero-seamless-mask"
               />
               {/* Dark desktop left-fade & bottom dissolve scrims */}
@@ -496,12 +506,12 @@ export function HomePage({
           {/* Mobile-first single-row tabs above the atelier image */}
           <div className="lg:hidden mb-6">
             <p className="text-[10.5px] font-semibold tracking-[0.2em] uppercase text-white/60 text-center mb-4">
-              The Maison Valen Standard
+              The mrtinternationalholdings Standard
             </p>
             <div
               className="grid grid-cols-3 gap-2 border-b border-white/15"
               role="tablist"
-              aria-label="Maison Valen pillars"
+              aria-label="mrtinternationalholdings pillars"
             >
               {BESPOKE_TABS.map((tab) => (
                 <button
@@ -526,14 +536,14 @@ export function HomePage({
             <div className="lg:col-span-6 relative bg-[#22272A] aspect-[4/3] lg:aspect-auto lg:min-h-[380px] overflow-hidden">
               <SafeImage
                 src={ASSETS.BESPOKE_CRAFT}
-                alt="Maison Valen master leather craftsman hand-cutting full-grain espresso hide in atelier"
+                alt="mrtinternationalholdings master leather craftsman hand-cutting full-grain espresso hide in atelier"
                 className="w-full h-full object-cover"
               />
             </div>
 
             <div className="lg:col-span-6 flex flex-col justify-center">
               <p className="hidden lg:block text-[11px] font-semibold tracking-[0.18em] uppercase text-white/60 mb-3">
-                The Maison Valen Standard
+                The mrtinternationalholdings Standard
               </p>
 
               {/* Desktop Pillar Tabs */}
@@ -1049,6 +1059,9 @@ export function HomePage({
       {/* Shoppable Community Video Lightbox Modal */}
       {activeVideo && (
         <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveVideo(null);
+          }}
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75"
           role="dialog"
           aria-modal="true"
