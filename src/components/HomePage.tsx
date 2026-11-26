@@ -178,8 +178,8 @@ export function HomePage({
 
   return (
     <div>
-      {/* 1. SEAMLESS CYCLORAMA EDITORIAL HERO — Vertical stack on mobile (zero text-on-face overlap), 2-column seamless cyclorama on desktop */}
-      <section className="relative bg-[#EFEFE9] dark:bg-[#0D1113] overflow-hidden border-b border-[#E5E5E0] dark:border-[#1E2428] transition-colors duration-300">
+      {/* 1. SEAMLESS CYCLORAMA EDITORIAL HERO — Centered studio models on mobile/tablet, 2-column seamless cyclorama on desktop, dual-layer opacity crossfade between Light & Dark */}
+      <section className="relative bg-[#EFEFE9] dark:bg-[#0D1113] overflow-hidden border-b border-[#E5E5E0] dark:border-[#1E2428] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
         {/* Reference-inspired sleek black sub-banner on mobile */}
         <div className="lg:hidden bg-[#0B0D0E] dark:bg-[#07090A] text-white text-center py-1.5 px-4 border-b border-white/10">
           <p className="font-display text-[15px] tracking-[0.03em] font-normal">
@@ -224,25 +224,53 @@ export function HomePage({
             </div>
           </div>
 
-          {/* Seamless Studio Models Layer — Dedicated clean viewport below CTA on mobile, right-anchored full-bleed on desktop */}
-          <div className="relative w-full h-[335px] sm:h-[420px] lg:h-full lg:absolute lg:inset-0 pointer-events-none select-none">
-            <SafeImage
-              src={theme === 'dark' ? ASSETS.HERO_CAMPAIGN_DARK : ASSETS.HERO_CAMPAIGN}
-              alt="Maison Valen UAE Black Friday Event models wearing full-grain handcrafted black biker, cognac cafe racer, and shearling aviator leather jackets"
-              className={`w-full h-full object-cover sm:object-[86%_8%] lg:object-[92%_6%] hero-seamless-mask ${
-                theme === 'dark' ? 'object-[92%_10%]' : 'object-[96%_8%]'
+          {/* Seamless Studio Models Layer — Both Light & Dark preloaded and stacked for seamless 500ms crossfade, mathematically centered on mobile/tablet */}
+          <div className="relative w-full h-[405px] sm:h-[465px] overflow-hidden lg:h-full lg:absolute lg:inset-0 pointer-events-none select-none">
+            {/* Light Mode Cyclorama Layer (model midpoint at 74.5% of image width) */}
+            <div
+              aria-hidden={theme === 'dark'}
+              className={`absolute inset-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                theme === 'dark' ? 'opacity-0' : 'opacity-100'
               }`}
-            />
-            {/* Seamless desktop left-side canvas integration (desktop only so mobile models stay crisp and unobstructed) */}
+            >
+              <SafeImage
+                src={ASSETS.HERO_CAMPAIGN}
+                alt="Maison Valen UAE Black Friday Event models wearing full-grain handcrafted black biker, cognac cafe racer, and shearling aviator leather jackets"
+                className="absolute top-0 left-1/2 -translate-x-[74.5%] h-full w-auto max-w-none lg:inset-0 lg:left-0 lg:translate-x-0 lg:w-full lg:h-full lg:object-cover lg:object-[92%_6%] hero-seamless-mask"
+              />
+              {/* Light desktop left-fade & bottom dissolve scrims (separate layers so gradients crossfade smoothly via opacity) */}
+              <div
+                aria-hidden="true"
+                className="hidden lg:block absolute inset-0 bg-gradient-to-r from-[#EFEFE9] via-[#EFEFE9]/20 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-10 lg:h-14 bg-gradient-to-t from-[#EFEFE9]/85 to-transparent"
+              />
+            </div>
+
+            {/* Dark Mode Cyclorama Layer (model midpoint at 76.2% of image width) */}
             <div
-              aria-hidden="true"
-              className="hidden lg:block absolute inset-0 bg-gradient-to-r from-[#EFEFE9] via-[#EFEFE9]/20 to-transparent dark:from-[#0D1113] dark:via-[#0D1113]/20 dark:to-transparent"
-            />
-            {/* Seamless subtle bottom dissolve into page */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-10 lg:h-14 bg-gradient-to-t from-[#EFEFE9]/80 dark:from-[#0D1113]/85 to-transparent"
-            />
+              aria-hidden={theme !== 'dark'}
+              className={`absolute inset-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                theme === 'dark' ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <SafeImage
+                src={ASSETS.HERO_CAMPAIGN_DARK}
+                alt="Maison Valen UAE Black Friday Event dark editorial campaign models in handcrafted leather outerwear"
+                className="absolute top-0 left-1/2 -translate-x-[76.2%] h-full w-auto max-w-none lg:inset-0 lg:left-0 lg:translate-x-0 lg:w-full lg:h-full lg:object-cover lg:object-[92%_6%] hero-seamless-mask"
+              />
+              {/* Dark desktop left-fade & bottom dissolve scrims */}
+              <div
+                aria-hidden="true"
+                className="hidden lg:block absolute inset-0 bg-gradient-to-r from-[#0D1113] via-[#0D1113]/20 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-10 lg:h-14 bg-gradient-to-t from-[#0D1113]/90 to-transparent"
+              />
+            </div>
           </div>
         </div>
       </section>

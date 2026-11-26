@@ -270,13 +270,24 @@ export function Header({
             onClick={onToggleTheme}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="w-9 h-9 sm:w-auto sm:h-auto sm:p-2 inline-flex items-center justify-center text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-[#F4F4F2] dark:hover:bg-[#191F23] transition-colors shrink-0"
+            className="relative w-9 h-9 sm:w-9 sm:h-9 inline-flex items-center justify-center text-[#1C1C1C] dark:text-[#F4F3EE] hover:bg-[#F4F4F2] dark:hover:bg-[#191F23] transition-colors shrink-0"
           >
-            {theme === 'dark' ? (
-              <Sun className="w-[17px] h-[17px] sm:w-4 sm:h-4" aria-hidden="true" />
-            ) : (
-              <Moon className="w-[17px] h-[17px] sm:w-4 sm:h-4" aria-hidden="true" />
-            )}
+            <Sun
+              className={`w-[17px] h-[17px] sm:w-4 sm:h-4 absolute transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                theme === 'dark'
+                  ? 'opacity-100 rotate-0 scale-100'
+                  : 'opacity-0 -rotate-90 scale-75 pointer-events-none'
+              }`}
+              aria-hidden="true"
+            />
+            <Moon
+              className={`w-[17px] h-[17px] sm:w-4 sm:h-4 absolute transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                theme === 'dark'
+                  ? 'opacity-0 rotate-90 scale-75 pointer-events-none'
+                  : 'opacity-100 rotate-0 scale-100'
+              }`}
+              aria-hidden="true"
+            />
           </button>
 
           <button

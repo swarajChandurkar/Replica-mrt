@@ -69,24 +69,26 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Synchronized smooth Light <-> Dark theme transition applied only during active toggle */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow !important;
+  transition-duration: 500ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
 /* Seamless editorial cyclorama image feathering so models emerge directly from page canvas */
 .hero-seamless-mask {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.72) 8%,
-    black 18%,
-    black 92%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.72) 8%,
-    black 18%,
-    black 92%,
-    transparent 100%
-  );
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.78) 6%, black 14%, black 92%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.78) 6%, black 14%, black 92%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
+  mask-composite: intersect;
 }
 
 @media (min-width: 1024px) {
@@ -99,6 +101,7 @@
       black 96%,
       transparent 100%
     );
+    -webkit-mask-composite: source-over;
     mask-image: linear-gradient(
       to right,
       transparent 0%,
@@ -107,6 +110,7 @@
       black 96%,
       transparent 100%
     );
+    mask-composite: add;
   }
 }
 

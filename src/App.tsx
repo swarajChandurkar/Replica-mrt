@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CartDrawer, CheckoutModal } from './components/CartAndCheckout';
 import { CollectionPage } from './components/CollectionPage';
 import { Footer } from './components/Footer';
@@ -71,8 +71,28 @@ export default function App() {
   const [accountOpen, setAccountOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
+  const isFirstThemeMount = useRef(true);
+  const themeTransitionTimer = useRef<number | null>(null);
+
   useEffect(() => {
     const root = document.documentElement;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isFirstThemeMount.current && !prefersReducedMotion) {
+      root.classList.add('theme-transitioning');
+      if (themeTransitionTimer.current !== null) {
+        window.clearTimeout(themeTransitionTimer.current);
+      }
+      themeTransitionTimer.current = window.setTimeout(() => {
+        root.classList.remove('theme-transitioning');
+        themeTransitionTimer.current = null;
+      }, 540);
+    }
+    isFirstThemeMount.current = false;
+
     if (theme === 'dark') {
       root.classList.add('dark');
     } else {
@@ -83,6 +103,12 @@ export default function App() {
     } catch {
       /* ignore */
     }
+
+    return () => {
+      if (themeTransitionTimer.current !== null) {
+        window.clearTimeout(themeTransitionTimer.current);
+      }
+    };
   }, [theme]);
 
   useEffect(() => {
@@ -210,7 +236,7 @@ export default function App() {
       : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#0E1214] text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#0E1214] text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-black dark:focus:bg-[#F4F3EE] focus:text-white dark:focus:text-[#0E1214] focus:px-4 focus:py-2 text-xs"
