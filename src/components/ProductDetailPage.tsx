@@ -81,7 +81,7 @@ export function ProductDetailPage({
 
   const relatedProducts = PRODUCTS.filter(
     (p) => p.id !== product.id && (p.gender === product.gender || p.category === product.category)
-  ).slice(0, 3);
+  ).slice(0, 4);
 
   const handleAdd = () => {
     if (isMadeToMeasure && !isBag && !measurements.submitLaterByEmail) {
@@ -221,9 +221,9 @@ export function ProductDetailPage({
   const isWishlisted = wishlist.includes(product.id);
 
   return (
-    <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-8 lg:py-12">
+    <div className="max-w-[1360px] mx-auto px-4 sm:px-10 py-5 lg:py-12">
       {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="text-xs text-[#767676] dark:text-[#8A8E91] mb-8 flex flex-wrap items-center gap-2">
+      <nav aria-label="Breadcrumb" className="text-xs text-[#767676] dark:text-[#8A8E91] mb-4 sm:mb-8 flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => onNavigate({ view: 'home' })}
@@ -249,10 +249,10 @@ export function ProductDetailPage({
       </nav>
 
       {/* Contiguous Purchase Module: Sticky Left Gallery + Sticky Right Purchase Controls */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-14 items-start">
         {/* Left Studio Gallery */}
-        <div className="lg:col-span-7 lg:sticky lg:top-32 space-y-4">
-          <div className="aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden">
+        <div className="lg:col-span-7 lg:sticky lg:top-32 space-y-3 sm:space-y-4">
+          <div className="aspect-[4/5] sm:aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden">
             <SafeImage
               src={activeImage}
               alt={product.name}
@@ -282,10 +282,10 @@ export function ProductDetailPage({
         </div>
 
         {/* Right Contiguous Purchase Panel */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-5 sm:space-y-6">
           {/* Header Metadata */}
           <div>
-            <div className="flex items-center gap-2 text-xs text-[#595959] dark:text-[#A8ACAF] mb-2">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[#595959] dark:text-[#A8ACAF] mb-2">
               {product.isFeaturedSale && (
                 <span className="text-[#C41E24] dark:text-[#E8555A] font-semibold tracking-[0.1em] uppercase">
                   Black Friday Sale
@@ -307,8 +307,8 @@ export function ProductDetailPage({
               )}
             </div>
 
-            <div className="flex items-start justify-between gap-4">
-              <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight">
+            <div className="flex items-start justify-between gap-3 sm:gap-4">
+              <h1 className="font-display text-[26px] sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-[1.14]">
                 {product.name}
               </h1>
               <button
@@ -467,14 +467,14 @@ export function ProductDetailPage({
                     setSizeError('');
                   }}
                   aria-pressed={isMadeToMeasure}
-                  className={`w-full py-3 px-4 border text-xs font-semibold tracking-[0.1em] uppercase flex items-center justify-between transition-colors ${
+                  className={`w-full py-3 px-3 sm:px-4 border text-[11px] sm:text-xs font-semibold tracking-[0.08em] sm:tracking-[0.1em] uppercase flex items-center justify-between gap-2 text-left transition-colors ${
                     isMadeToMeasure
                       ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
                       : 'bg-[#FAF9F7] dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE]'
                   }`}
                 >
                   <span>Made To Measure (3–4 Weeks Tailored)</span>
-                  <span className="tabular-nums">
+                  <span className="tabular-nums shrink-0">
                     +{formatMoney(MADE_TO_MEASURE_SURCHARGE_AED, currency)}
                   </span>
                 </button>
@@ -675,8 +675,8 @@ export function ProductDetailPage({
       </div>
 
       {/* Customer Reviews Section */}
-      <section className="mt-20 pt-14 border-t border-[#E5E5E3] dark:border-[#262D31]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <section className="mt-14 sm:mt-20 pt-10 sm:pt-14 border-t border-[#E5E5E3] dark:border-[#262D31]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
           <div className="lg:col-span-5 space-y-5">
             <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91]">
               Verified Buyers
@@ -803,11 +803,11 @@ export function ProductDetailPage({
       </section>
 
       {/* You May Also Like */}
-      <section className="mt-20 pt-14 border-t border-[#E5E5E3] dark:border-[#262D31]">
-        <h2 className="font-display text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-8">
+      <section className="mt-14 sm:mt-20 pt-10 sm:pt-14 border-t border-[#E5E5E3] dark:border-[#262D31]">
+        <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-6 sm:mb-8">
           You May Also Like
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3.5 gap-y-7 sm:gap-6">
           {relatedProducts.map((rel) => (
             <ProductCard
               key={rel.id}

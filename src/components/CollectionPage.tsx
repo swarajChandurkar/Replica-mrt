@@ -135,9 +135,9 @@ export function CollectionPage({
   const hasActiveFilters = leatherType !== 'all' || primeOnly || (category !== 'all' && filter !== 'suits' && filter !== 'bags' && filter !== 'shoes');
 
   return (
-    <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-10 lg:py-14">
+    <div className="max-w-[1360px] mx-auto px-4 sm:px-10 py-6 lg:py-14">
       {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="text-xs text-[#767676] dark:text-[#8A8E91] mb-6 flex items-center gap-2">
+      <nav aria-label="Breadcrumb" className="text-xs text-[#767676] dark:text-[#8A8E91] mb-4 sm:mb-6 flex items-center gap-2">
         <button
           type="button"
           onClick={() => onNavigate({ view: 'home' })}
@@ -150,7 +150,7 @@ export function CollectionPage({
       </nav>
 
       {/* Editorial Collection Header */}
-      <div className="max-w-2xl mb-10">
+      <div className="max-w-2xl mb-6 sm:mb-10">
         <p
           className={`text-[11px] font-semibold tracking-[0.18em] uppercase mb-2 ${
             filter === 'sale' ? 'text-[#C41E24] dark:text-[#E8555A]' : 'text-[#767676] dark:text-[#8A8E91]'
@@ -158,20 +158,20 @@ export function CollectionPage({
         >
           {meta.eyebrow}
         </p>
-        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight mb-3">
+        <h1 className="font-display text-[28px] sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-[1.12] mb-2.5 sm:mb-3">
           {meta.title}
         </h1>
-        <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">{meta.description}</p>
+        <p className="text-[13px] sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">{meta.description}</p>
       </div>
 
       {/* Category Sub-Navigation */}
-      <div className="flex flex-wrap items-center gap-2 pb-6 mb-6 border-b border-[#E5E5E3] dark:border-[#23292D]">
+      <div className="flex flex-nowrap overflow-x-auto no-scrollbar sm:flex-wrap items-center gap-2 -mx-4 px-4 sm:mx-0 sm:px-0 pb-4 sm:pb-6 mb-5 sm:mb-6 border-b border-[#E5E5E3] dark:border-[#23292D]">
         {categoryTabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setCategory(tab.id)}
-            className={`px-4 py-2 text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+            className={`px-3.5 sm:px-4 py-2 text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
               category === tab.id
                 ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
                 : 'bg-white dark:bg-[#14191C] text-[#595959] dark:text-[#A8ACAF] border-[#E5E5E3] dark:border-[#262D31] hover:border-[#1C1C1C] dark:hover:border-[#F4F3EE] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE]'
@@ -183,9 +183,9 @@ export function CollectionPage({
       </div>
 
       {/* Filter & Sort Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-9">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-9">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3">
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
             <SlidersHorizontal className="w-3.5 h-3.5" aria-hidden="true" />
             Filter:
           </span>
@@ -197,7 +197,7 @@ export function CollectionPage({
             id="filter-material"
             value={leatherType}
             onChange={(e) => setLeatherType(e.target.value)}
-            className="border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-3 py-2 text-xs text-[#1C1C1C] dark:text-[#F4F3EE]"
+            className="w-full sm:w-auto border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-2.5 sm:px-3 py-2 text-xs text-[#1C1C1C] dark:text-[#F4F3EE]"
           >
             <option value="all">All Materials</option>
             <option value="Sheepskin">Full-Grain Sheepskin</option>
@@ -208,14 +208,15 @@ export function CollectionPage({
             <option value="Full-Grain Calf">Full-Grain Calf</option>
           </select>
 
-          <label className="inline-flex items-center gap-2 text-xs text-[#1C1C1C] dark:text-[#E5E4DE] border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-3 py-2 cursor-pointer select-none">
+          <label className="inline-flex items-center justify-center sm:justify-start gap-2 text-xs text-[#1C1C1C] dark:text-[#E5E4DE] border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-2.5 sm:px-3 py-2 cursor-pointer select-none whitespace-nowrap">
             <input
               type="checkbox"
               checked={primeOnly}
               onChange={(e) => setPrimeOnly(e.target.checked)}
               className="accent-[#1C1C1C] dark:accent-[#F4F3EE]"
             />
-            Prime UAE Delivery Only
+            <span className="sm:hidden">Prime UAE Only</span>
+            <span className="hidden sm:inline">Prime UAE Delivery Only</span>
           </label>
 
           {hasActiveFilters && (
@@ -228,14 +229,14 @@ export function CollectionPage({
                   setCategory('all');
                 }
               }}
-              className="inline-flex items-center gap-1 text-xs text-[#595959] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] underline underline-offset-4"
+              className="col-span-2 sm:col-span-1 justify-self-start inline-flex items-center gap-1 text-xs text-[#595959] dark:text-[#A8ACAF] hover:text-[#1C1C1C] dark:hover:text-[#F4F3EE] underline underline-offset-4"
             >
               <X className="w-3.5 h-3.5" aria-hidden="true" /> Clear filters
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
           <span className="text-xs text-[#767676] dark:text-[#8A8E91] tabular-nums">
             {visibleProducts.length} {visibleProducts.length === 1 ? 'Piece' : 'Pieces'}
           </span>
@@ -250,7 +251,7 @@ export function CollectionPage({
               onChange={(e) =>
                 setSortBy(e.target.value as 'best-selling' | 'price-asc' | 'price-desc' | 'rating-desc')
               }
-              className="border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-3 py-2 text-xs text-[#1C1C1C] dark:text-[#F4F3EE]"
+              className="border border-[#D4D4D0] dark:border-[#2B3237] bg-white dark:bg-[#14191C] px-2.5 sm:px-3 py-2 text-xs text-[#1C1C1C] dark:text-[#F4F3EE]"
             >
               <option value="best-selling">Best Selling</option>
               <option value="price-asc">Price: Low to High</option>
@@ -293,7 +294,7 @@ export function CollectionPage({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-12">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3.5 gap-y-7 sm:gap-x-7 sm:gap-y-12">
           {visibleProducts.map((product) => (
             <ProductCard
               key={product.id}

@@ -116,16 +116,16 @@ export function JacketBuilderPage({
   };
 
   return (
-    <div className="max-w-[1360px] mx-auto px-6 sm:px-10 py-10 lg:py-14">
+    <div className="max-w-[1360px] mx-auto px-4 sm:px-10 py-6 lg:py-14">
       {/* Header */}
-      <div className="max-w-3xl mb-10">
+      <div className="max-w-3xl mb-6 sm:mb-10">
         <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
           Bespoke Leather Configurator · Free UAE Shipping &amp; Alteration
         </p>
-        <h1 className="font-display text-3xl sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-tight mb-3">
+        <h1 className="font-display text-[28px] sm:text-5xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-[1.12] mb-2.5 sm:mb-3">
           Design Your Own Leather Jacket
         </h1>
-        <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
+        <p className="text-[13px] sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
           {prefillName
             ? `Starting from the proportions of ${prefillName} — configure your hide, finish, hardware, lining, and personal monogram with real-time pricing.`
             : 'Configure every detail from base silhouette and natural full-grain hide to YKK hardware, interior lining, and pocket embroidery. Includes a dedicated design consultant and studio illustration review.'}
@@ -133,10 +133,10 @@ export function JacketBuilderPage({
       </div>
 
       {/* Main Configurator Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 sm:gap-10 lg:gap-12 items-start">
         {/* Sticky Live Visual & Spec Sheet */}
-        <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-5">
-          <div className="relative aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden border border-[#E5E5E3] dark:border-[#262D31]">
+        <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-4 sm:space-y-5">
+          <div className="relative aspect-[4/4.3] sm:aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden border border-[#E5E5E3] dark:border-[#262D31]">
             <SafeImage
               src={previewImage}
               alt={`Bespoke ${BUILDER_STYLE_DELTAS[config.baseStyle].label} preview`}
@@ -146,11 +146,11 @@ export function JacketBuilderPage({
               aria-hidden="true"
               className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"
             />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-              <p className="text-[11px] tracking-[0.16em] uppercase text-white/75 mb-1">
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 text-white">
+              <p className="text-[10px] sm:text-[11px] tracking-[0.16em] uppercase text-white/75 mb-1">
                 Live Bespoke Specification
               </p>
-              <p className="font-display text-2xl font-medium">
+              <p className="font-display text-xl sm:text-2xl font-medium">
                 {BUILDER_STYLE_DELTAS[config.baseStyle].label}
               </p>
               <p className="text-xs text-white/85 mt-1">
@@ -166,38 +166,38 @@ export function JacketBuilderPage({
           </div>
 
           {/* Live Summary Ledger */}
-          <div className="border border-[#E5E5E3] dark:border-[#262D31] bg-[#FAF9F7] dark:bg-[#14191C] p-5 space-y-2.5 text-xs">
-            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
-              <span>Silhouette</span>
-              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+          <div className="border border-[#E5E5E3] dark:border-[#262D31] bg-[#FAF9F7] dark:bg-[#14191C] p-4 sm:p-5 space-y-2.5 text-xs">
+            <div className="flex items-start justify-between gap-3 text-[#595959] dark:text-[#A8ACAF]">
+              <span className="shrink-0">Silhouette</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] text-right">
                 {BUILDER_STYLE_DELTAS[config.baseStyle].label}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
-              <span>Hide &amp; Finish</span>
-              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+            <div className="flex items-start justify-between gap-3 text-[#595959] dark:text-[#A8ACAF]">
+              <span className="shrink-0">Hide &amp; Finish</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] text-right">
                 {BUILDER_LEATHER_DELTAS[config.leatherType].label} ·{' '}
                 {BUILDER_FINISH_DELTAS[config.leatherFinish].label}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
-              <span>Shade &amp; Hardware</span>
-              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+            <div className="flex items-start justify-between gap-3 text-[#595959] dark:text-[#A8ACAF]">
+              <span className="shrink-0">Shade &amp; Hardware</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] text-right">
                 {config.isCustomPantone
                   ? `Pantone ${config.pantoneCode.trim() || 'Custom'}`
                   : config.shade}{' '}
                 · {config.hardware}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
-              <span>Inner Lining</span>
-              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+            <div className="flex items-start justify-between gap-3 text-[#595959] dark:text-[#A8ACAF]">
+              <span className="shrink-0">Inner Lining</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] text-right">
                 {BUILDER_LINING_DELTAS[config.lining].label}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#595959] dark:text-[#A8ACAF]">
-              <span>Digital Bespoke Pipeline</span>
-              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
+            <div className="flex items-start justify-between gap-3 text-[#595959] dark:text-[#A8ACAF]">
+              <span className="shrink-0">Digital Bespoke Pipeline</span>
+              <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE] text-right">
                 10–12 Weeks · 7 Steps
               </span>
             </div>
@@ -578,7 +578,7 @@ export function JacketBuilderPage({
               <button
                 type="button"
                 onClick={() => setConfig((c) => ({ ...c, fitType: 'standard' }))}
-                className={`flex-1 py-2.5 border text-xs font-semibold ${
+                className={`flex-1 py-2.5 px-2.5 border text-[11px] sm:text-xs font-semibold leading-snug ${
                   config.fitType === 'standard'
                     ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
                     : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31]'
@@ -589,7 +589,7 @@ export function JacketBuilderPage({
               <button
                 type="button"
                 onClick={() => setConfig((c) => ({ ...c, fitType: 'made-to-measure' }))}
-                className={`flex-1 py-2.5 border text-xs font-semibold ${
+                className={`flex-1 py-2.5 px-2.5 border text-[11px] sm:text-xs font-semibold leading-snug ${
                   config.fitType === 'made-to-measure'
                     ? 'bg-[#1C1C1C] dark:bg-[#F4F3EE] text-white dark:text-[#0E1214] border-[#1C1C1C] dark:border-[#F4F3EE]'
                     : 'bg-white dark:bg-[#14191C] text-[#1C1C1C] dark:text-[#F4F3EE] border-[#D8D8D5] dark:border-[#262D31]'
@@ -640,23 +640,26 @@ export function JacketBuilderPage({
       </div>
 
       {/* 7-Step Bespoke Process */}
-      <section className="mt-24 pt-16 border-t border-[#E5E5E3] dark:border-[#262D31]">
-        <div className="max-w-2xl mb-12">
+      <section className="mt-14 sm:mt-24 pt-10 sm:pt-16 border-t border-[#E5E5E3] dark:border-[#262D31]">
+        <div className="max-w-2xl mb-7 sm:mb-12">
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#767676] dark:text-[#8A8E91] mb-2">
             The Process · How It Works
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-3">
+          <h2 className="font-display text-2xl sm:text-4xl font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] mb-2.5 sm:mb-3">
             Seven Guided Steps From Idea to Delivery
           </h2>
-          <p className="text-sm sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
+          <p className="text-[13px] sm:text-base text-[#595959] dark:text-[#A8ACAF] leading-relaxed">
             Every bespoke jacket begins with your vision and moves through a transparent,
             consultant-led journey ensuring comfort, confidence, and clarity from start to finish.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3.5 -mx-4 px-4 sm:mx-0 sm:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6">
           {BESPOKE_STEPS.map((s) => (
-            <div key={s.step} className="border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-6">
+            <div
+              key={s.step}
+              className="w-[78vw] max-w-[290px] shrink-0 snap-start md:w-auto md:max-w-none border border-[#E5E5E3] dark:border-[#262D31] bg-white dark:bg-[#14191C] p-5 sm:p-6"
+            >
               <span className="font-display text-2xl font-semibold text-[#767676] dark:text-[#8A8E91] tabular-nums">
                 {s.step}
               </span>

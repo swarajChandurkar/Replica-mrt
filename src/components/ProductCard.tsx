@@ -1,4 +1,4 @@
-import { Heart, Star } from 'lucide-react';
+import { Heart, Plus, Star } from 'lucide-react';
 import type { CurrencyCode, Product } from '../types';
 import { formatMoney } from '../utils/commerce';
 import { SafeImage } from './SafeImage';
@@ -21,7 +21,7 @@ export function ProductCard({
   onQuickAdd,
 }: ProductCardProps) {
   return (
-    <article className="group flex flex-col bg-transparent transition-transform duration-200 hover:-translate-y-0.5">
+    <article className="group flex flex-col bg-transparent transition-transform duration-200 hover:-translate-y-0.5 min-w-0">
       {/* Studio Image Surface */}
       <div className="relative aspect-[3/4] bg-[#F1F1EF] dark:bg-[#161B1E] overflow-hidden">
         <button
@@ -47,10 +47,10 @@ export function ProductCard({
               : `Save ${product.name} to wishlist`
           }
           aria-pressed={isWishlisted}
-          className="absolute top-3 right-3 w-9 h-9 bg-white/90 dark:bg-[#0E1214]/85 hover:bg-white dark:hover:bg-[#0E1214] flex items-center justify-center text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors"
+          className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 sm:w-9 sm:h-9 bg-white/90 dark:bg-[#0E1214]/85 hover:bg-white dark:hover:bg-[#0E1214] flex items-center justify-center text-[#1C1C1C] dark:text-[#F4F3EE] transition-colors"
         >
           <Heart
-            className={`w-4 h-4 ${
+            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
               isWishlisted
                 ? 'fill-[#C41E24] text-[#C41E24] dark:fill-[#E8555A] dark:text-[#E8555A]'
                 : 'text-[#1C1C1C] dark:text-[#F4F3EE]'
@@ -59,8 +59,18 @@ export function ProductCard({
           />
         </button>
 
-        {/* Subtle Hover Quick-Add Bar */}
-        <div className="absolute inset-x-0 bottom-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-within:translate-y-0 focus-within:opacity-100 transition-all duration-200">
+        {/* Touch-Friendly Mobile Quick-Add Icon Button */}
+        <button
+          type="button"
+          onClick={() => onQuickAdd(product)}
+          aria-label={`Quick add ${product.name} size M`}
+          className="sm:hidden absolute bottom-2 right-2 w-8 h-8 bg-[#1C1C1C]/90 dark:bg-[#F4F3EE]/90 text-white dark:text-[#0E1214] flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+        >
+          <Plus className="w-4 h-4" aria-hidden="true" />
+        </button>
+
+        {/* Subtle Desktop Hover Quick-Add Bar */}
+        <div className="hidden sm:block absolute inset-x-0 bottom-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-within:translate-y-0 focus-within:opacity-100 transition-all duration-200">
           <button
             type="button"
             onClick={() => onQuickAdd(product)}
@@ -72,26 +82,28 @@ export function ProductCard({
       </div>
 
       {/* Clean Unboxed Metadata */}
-      <div className="pt-3.5 flex flex-col flex-1">
-        <div className="flex items-center gap-2 text-[11.5px] text-[#595959] dark:text-[#A8ACAF] mb-1">
-          <span>{product.categoryLabel}</span>
+      <div className="pt-2.5 sm:pt-3.5 flex flex-col flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11.5px] text-[#595959] dark:text-[#A8ACAF] mb-1 truncate">
+          <span className="truncate">{product.categoryLabel}</span>
           {product.primeDelivery && (
             <>
-              <span aria-hidden="true">·</span>
-              <span className="text-[#1C1C1C] dark:text-[#F4F3EE] font-medium">Prime Delivery</span>
+              <span aria-hidden="true" className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline text-[#1C1C1C] dark:text-[#F4F3EE] font-medium shrink-0">
+                Prime Delivery
+              </span>
             </>
           )}
           {product.discountPercent && (
             <>
               <span aria-hidden="true">·</span>
-              <span className="text-[#C41E24] dark:text-[#E8555A] font-semibold">
+              <span className="text-[#C41E24] dark:text-[#E8555A] font-semibold shrink-0">
                 {product.discountPercent}% off
               </span>
             </>
           )}
         </div>
 
-        <h3 className="font-body text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-snug mb-1.5">
+        <h3 className="font-body text-[13px] sm:text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE] leading-snug mb-1 sm:mb-1.5 line-clamp-2">
           <button
             type="button"
             onClick={() => onSelectProduct(product.slug)}
@@ -102,26 +114,26 @@ export function ProductCard({
         </h3>
 
         {/* Rating Row */}
-        <div className="flex items-center gap-1.5 text-xs text-[#595959] dark:text-[#A8ACAF] mb-2 tabular-nums">
+        <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-[#595959] dark:text-[#A8ACAF] mb-1.5 sm:mb-2 tabular-nums">
           <Star
-            className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C] dark:fill-[#D9AD4E] dark:text-[#D9AD4E]"
+            className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#C89B3C] text-[#C89B3C] dark:fill-[#D9AD4E] dark:text-[#D9AD4E] shrink-0"
             aria-hidden="true"
           />
           <span className="font-medium text-[#1C1C1C] dark:text-[#F4F3EE]">
             {product.rating.toFixed(1)}
           </span>
           <span aria-hidden="true">·</span>
-          <span>{product.reviewCount} Reviews</span>
+          <span className="truncate">{product.reviewCount} Reviews</span>
         </div>
 
         {/* Swatches + Price Baseline */}
-        <div className="mt-auto pt-1 flex items-end justify-between gap-2">
-          <div className="flex items-baseline gap-2 tabular-nums">
-            <span className="text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
+        <div className="mt-auto pt-1 flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 sm:gap-2">
+          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 tabular-nums">
+            <span className="text-[13px] sm:text-[15px] font-semibold text-[#1C1C1C] dark:text-[#F4F3EE]">
               {formatMoney(product.priceAED, currency)}
             </span>
             {product.compareAtAED && (
-              <span className="text-xs text-[#767676] dark:text-[#84888B] line-through">
+              <span className="text-[11px] sm:text-xs text-[#767676] dark:text-[#84888B] line-through">
                 {formatMoney(product.compareAtAED, currency)}
               </span>
             )}
@@ -132,7 +144,7 @@ export function ProductCard({
               <span
                 key={c.name}
                 title={c.name}
-                className="w-3 h-3 rounded-full border border-black/20 dark:border-white/25 shrink-0"
+                className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-black/20 dark:border-white/25 shrink-0"
                 style={{ backgroundColor: c.hex }}
               />
             ))}
